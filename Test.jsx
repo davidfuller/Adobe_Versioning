@@ -6,7 +6,7 @@
 var file = new File;
 var defaultXMLFolder = new Folder("/Users/David/Dropbox/Development/Adobe/Excel/")
 var myXML
-var doIt
+var doIt  
 
 var fileWindow = getXMLFile();
 if (fileWindow.show() == 1){
