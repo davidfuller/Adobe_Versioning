@@ -18,6 +18,14 @@
       "name": "Test",
       "program": "${workspaceFolder}/Test.jsx",
       "stopOnEntry": false
+    },
+    {
+      "type": "extendscript-debug",
+      "request": "launch",
+      "name": "XML_Test",
+      "program": "${workspaceFolder}/XML_Test.jsx",
+      "stopOnEntry": false
     }
+
   ]
 }
