@@ -120,7 +120,9 @@ function getXMLFile(){
 
   function fileButtonClick(){
     file = defaultXMLFolder.openDlg("Open XML file","XML file: *.xml", false);
-    fileNameTextBox.text = file.fsName
+    if (file != null){
+      fileNameTextBox.text = file.fsName
+    }
   }
 }
 

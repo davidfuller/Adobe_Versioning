@@ -5,7 +5,7 @@
 //@include "globals.jsx"
 
 var file = new File;
-var defaultXMLFolder = new Folder("/Users/David/Dropbox/Development/Adobe/Excel/")
+var defaultXMLFolder = getXMLFolder()
 var myXML
 var doIt  
 
