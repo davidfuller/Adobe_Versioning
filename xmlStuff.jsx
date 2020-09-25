@@ -17,6 +17,11 @@ function promoData(theXML, itemNo){
 
 }
 
+function saveSettings(settingsObject){
+  
+}
+
+
 function promoCount(theXML){
   return theXML.elements()[0].elements().length()
 }

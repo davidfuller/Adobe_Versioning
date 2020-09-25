@@ -2,6 +2,7 @@
 //@include "ui_stuff.jsx"
 //@include "xmlStuff.jsx"
 //@include "Render_Stuff.jsx"
+//@include "globals.jsx"
 
 var file = new File;
 var defaultXMLFolder = new Folder("/Users/David/Dropbox/Development/Adobe/Excel/")
