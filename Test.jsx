@@ -4,6 +4,7 @@
 //@include "Render_Stuff.jsx"
 //@include "globals.jsx"
 
+var theSettings = loadSettings(settingsFileName);
 var file = new File;
 var defaultXMLFolder = getXMLFolder()
 var myXML
