@@ -18,6 +18,17 @@ function promoData(theXML, itemNo){
 }
 
 function saveSettings(settingsObject){
+  XML.ignoreProcessingInstructions = false
+  var heading = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+  var testXML = new XML("<settings></settings>");
+
+  for (var key in settingsObject){
+    var temp = new XML("<temp>temp</temp>")
+    testXML.insertChildBefore(null, temp);
+    testXML.children()[testXML.children().length() - 1].setLocalName(key);
+    testXML.children()[testXML.children().length() - 1] = settingsObject[key];
+  }
+
   
 }
 
