@@ -5,8 +5,11 @@
 //@include "globals.jsx"
 //@include "File_Stuff.jsx"
 
-var theSettings = {
-  macXMLPath: macXMLFolder,
-  pcXMLPath: pcXMLFolder
+//$.writeln(saveSettings(theSettings, settingsFileName));
+var theSettings = loadSettings(settingsFileName);
+
+for (var key in theSettings){
+  $.writeln(key + ": " + theSettings[key]);
 }
-$.writeln(saveSettings(theSettings, settingsFileName));
+
+$.writeln(getXMLFolder());
