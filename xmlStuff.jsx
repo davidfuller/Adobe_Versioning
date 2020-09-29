@@ -50,6 +50,21 @@ function saveSettings(settingsObject, profileName){
   } 
 }
 
+function loadSettings(profileName){
+  var myXMLFile = new File(settingsFolder + profileName);
+  if (myXMLFile.open("r")){
+    var xmlSettingsString = myXMLFile.read(); 
+    var mySettingsXML = new XML(xmlSettingsString);
+    $.writeln(mySettingsXML.children())
+    var temp = {};
+    for (var i = 0; i < mySettingsXML.children().length(); i++){
+        temp[mySettingsXML.children()[i].localName()] = mySettingsXML.children()[i].toString();
+    }
+    return temp;
+  } else {
+    return defaultSettings;
+  }
+}
 
 function promoCount(theXML){
   return theXML.elements()[0].elements().length()
