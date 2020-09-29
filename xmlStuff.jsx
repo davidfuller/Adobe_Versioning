@@ -28,8 +28,26 @@ function saveSettings(settingsObject){
     testXML.children()[testXML.children().length() - 1].setLocalName(key);
     testXML.children()[testXML.children().length() - 1] = settingsObject[key];
   }
-
-  
+  if (createFolderIfNeeded(Folder(settingsFolder))){
+    var myXMLFile = new File(settingsFolder + settingsFileName);
+    if (myXMLFile.open("w")){
+      if (myXMLFile.writeln(heading)){
+        if (myXMLFile.write(testXML.toXMLString())){
+          if(myXMLFile.close()){
+            return true
+          } else {
+            return false
+          }
+        } else {
+          return false
+        }
+      } else {
+        return false
+      }
+    }
+  } else {
+    return false
+  } 
 }
 
 
