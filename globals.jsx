@@ -10,3 +10,5 @@ function getXMLFolder(){
     return new Folder(macXMLFolder);
   }
 }
+
+//A comment
