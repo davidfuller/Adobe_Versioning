@@ -17,7 +17,7 @@ function promoData(theXML, itemNo){
 
 }
 
-function saveSettings(settingsObject){
+function saveSettings(settingsObject, profileName){
   XML.ignoreProcessingInstructions = false
   var heading = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
   var testXML = new XML("<settings></settings>");
@@ -29,7 +29,7 @@ function saveSettings(settingsObject){
     testXML.children()[testXML.children().length() - 1] = settingsObject[key];
   }
   if (createFolderIfNeeded(Folder(settingsFolder))){
-    var myXMLFile = new File(settingsFolder + settingsFileName);
+    var myXMLFile = new File(settingsFolder + profileName);
     if (myXMLFile.open("w")){
       if (myXMLFile.writeln(heading)){
         if (myXMLFile.write(testXML.toXMLString())){

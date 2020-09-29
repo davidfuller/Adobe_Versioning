@@ -9,4 +9,4 @@ var theSettings = {
   macXMLPath: macXMLFolder,
   pcXMLPath: pcXMLFolder
 }
-$.writeln(saveSettings(theSettings));
+$.writeln(saveSettings(theSettings, settingsFileName));
