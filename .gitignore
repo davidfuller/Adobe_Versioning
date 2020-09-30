@@ -54,3 +54,4 @@ types/*
 settings/*
 .vscode/*
 xml/*
+jsconfig.json
