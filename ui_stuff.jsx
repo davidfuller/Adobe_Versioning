@@ -1,7 +1,10 @@
-function createMyWindow(theComps){
+function createCompSettingsWindow(theComps){
   var numTextDropDowns = 3;
-  var myWindow = new Window("dialog","Hello World")
+  var numRenderTemplates = 2;
+  var myWindow = new Window("dialog","Comp and Field Settings")
   myWindow.orientation = "column";
+  var renderLabels = ["Still", "Movie"];
+  var selectCompIndex = null;
    
   var rowOne = myWindow.add("group")
   rowOne.add("statictext", undefined, "Composition")
@@ -9,50 +12,82 @@ function createMyWindow(theComps){
   
   var rowTwo = myWindow.add("group")
   rowTwo.alignment = "left"
-  var myDropdown = rowTwo.add("dropdownlist", undefined,[])
+  var compDropdown = rowTwo.add("dropdownlist", undefined,[])
   for (var i = 0; i < theComps.length; i++){
-    myDropdown.add("item", theComps[i].name)
+    compDropdown.add("item", theComps[i].name)
   }
   var setActive = rowTwo.add("button", undefined, "Select Active Comp")
   
   var rowThree = myWindow.add("group")
   rowThree.alignment = "left"
   rowThree.orientation = "column"
-  rowThree.add("statictext", undefined, "Text Layers")
+  var textLabel = rowThree.add("statictext", undefined, "Text Layers")
+  textLabel.alignment = "left"
   
   var myTextDropDown = []
   var textFromLayer = []
   var grp = []
   var myLabel = []
-  for (var i = 0; i < numTextDropDowns; i++){
+  var myRenderDropDown = [];
+  var myRenderLabel = [];
+
+  var loopValue = numTextDropDowns;
+  if (numRenderTemplates > numTextDropDowns){
+    loopValue = numRenderTemplates;
+  }
+
+  for (var i = 0; i < loopValue; i++){
     grp[i] = rowThree.add("group")
     grp[i].orientation = "row"
-    myLabel[i] = grp[i].add("statictext", undefined, myFields[i]);
-    myLabel[i].size = [60,10]
+    grp[i].alignment = "left"
 
-    myTextDropDown[i] = grp[i].add("dropdownlist",undefined,[])
-    myTextDropDown[i].add("item", "Text Layers will appear here")
-    myTextDropDown[i].selection = 0
-    myTextDropDown[i].size = [280,-1]
+    if (i < numTextDropDowns){
+      myLabel[i] = grp[i].add("statictext", undefined, myFields[i]);
+      myLabel[i].size = [60,10];
+  
+      myTextDropDown[i] = grp[i].add("dropdownlist",undefined,[])
+      myTextDropDown[i].add("item", "Text Layers will appear here")
+      myTextDropDown[i].selection = 0
+      myTextDropDown[i].size = [280,-1]
+      
+      textFromLayer[i] = grp[i].add("statictext",undefined,"")
+      textFromLayer[i].size = [280, 10]
+    }
+    if (i < numRenderTemplates){
+      myRenderLabel[i] = grp[i].add("statictext", undefined, renderLabels[i]);
+      myRenderLabel[i].size = [60,10];
+
+      myRenderDropDown[i] = grp[i].add("dropdownlist", undefined, []);
+      myRenderDropDown[i].add("item", "Render templates will appear here");
+      myRenderDropDown[i].selection = 0
+      myRenderDropDown[i].size = [280, -1]
+    }
+
     
-    textFromLayer[i] = grp[i].add("statictext",undefined,"")
-    textFromLayer[i].size = [280, 10]
   }
   
   setActive.onClick = function(){
     if (app.project.activeItem != null){
-      myDropdown.selection = myDropdown.find(app.project.activeItem.name)
+      compDropdown.selection = compDropdown.find(app.project.activeItem.name)
     }
   }
   
-  myDropdown.onChange = function(){
-    var myTextLayers = textLayers(theComps[selectedComp(myDropdown)])
-    $.writeln("Change: " + myDropdown.selection.toString())
+  compDropdown.onChange = function(){
+    selectCompIndex = selectedComp(compDropdown)
+    var myTextLayers = textLayers(theComps[selectCompIndex])
+    $.writeln("Change: " + compDropdown.selection.toString())
     
     for (var i = 0; i < numTextDropDowns; i++){
-      myTextDropDown[i].removeAll()
+      myTextDropDown[i].removeAll();
       for (var j = 0; j < myTextLayers.length; j++){
         myTextDropDown[i].add("item", myTextLayers[j].name)
+      }
+    }
+    var renderTemplates = availableRenderTemplates(theComps[selectedComp(compDropdown)]);
+    for (var i = 0; i < numRenderTemplates; i++){
+      myRenderDropDown[i].removeAll();
+      for (var j = 0; j < renderTemplates.length; j++){
+        myRenderDropDown[i].add("item", renderTemplates[j]);
       }
     }
   }
@@ -69,7 +104,7 @@ function createMyWindow(theComps){
   }
   
   function textDropDownChange(index){
-    var myTextLayers = textLayers(theComps[selectedComp(myDropdown)])
+    var myTextLayers = textLayers(theComps[selectedComp(compDropdown)])
     $.writeln("Text Change No:" + index)
     if (myTextDropDown[index].selection != null){
       var selectedLayer = Number(myTextDropDown[index].selection.valueOf())
@@ -87,11 +122,11 @@ function createMyWindow(theComps){
   rowFive.add("button", undefined, "Cancel")
   rowFive.alignment = "right"
 
-  return {window: myWindow, dropdown: myDropdown, textLayers: myTextDropDown}
+  return {window: myWindow, compDropdown: compDropdown, textLayers: myTextDropDown, renderDropdowns: myRenderDropDown}
 }
 
 function selectedComp(theDropdown){
-  if (theDropdown instanceof DropDownList){
+  if (theDropdown instanceof DropDownList && theDropdown.selection != null){
     return Number(theDropdown.selection.valueOf())
   } else {
     return 0
