@@ -54,4 +54,5 @@ types/*
 settings/*
 .vscode/*
 xml/*
+AE Render Settings/*
 jsconfig.json
