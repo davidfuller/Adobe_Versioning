@@ -46,25 +46,26 @@ if (doIt){
 
 
   var projectItems = compItems();
-  var myWindow = createMyWindow(projectItems);
+  var compWindow = createCompSettingsWindow(projectItems);
   var myComp = null;
 
   var selectedTextlayers = []
-
-  if (myWindow.window.show() == 1){
-    if (myWindow.dropdown instanceof DropDownList && myWindow.dropdown.selection != null) {
-      var mySelection = Number(myWindow.dropdown.selection.valueOf())
-      $.writeln("Comp: " + projectItems[mySelection].name)
-      $.writeln("id: " + projectItems[mySelection].id)
-      myComp = projectItems[mySelection]
+  
+  if (compWindow.window.show() == 1){
+    if (compWindow.compDropdown instanceof DropDownList && compWindow.compDropdown.selection != null) {
+      myComp = compFromDropDown(compWindow)
       if (myComp != null){
         var allTextLayers = textLayers(myComp);
-        for (var i = 0; i < myWindow.textLayers.length; i++){
-          if (myWindow.textLayers[i] instanceof DropDownList && myWindow.textLayers[i].selection != null) {
-            selectedTextlayers.push(allTextLayers[Number(myWindow.textLayers[i].selection.valueOf())])
+        for (var i = 0; i < compWindow.textLayers.length; i++){
+          if (compWindow.textLayers[i] instanceof DropDownList && compWindow.textLayers[i].selection != null) {
+            selectedTextlayers.push(allTextLayers[Number(compWindow.textLayers[i].selection.valueOf())])
             $.write("Text Layer: ")
-            $.writeln(Number(myWindow.textLayers[i].selection.valueOf()))
+            $.writeln(Number(compWindow.textLayers[i].selection.valueOf()))
           }
+        }
+        var renderProfile ={}
+        if (compWindow.renderDropdowns[0] instanceof DropDownList && compWindow.renderDropdowns[0].selection != null){
+          renderProfile.still = compWindow.renderDropdowns[0].selection 
         }
       }
     } else {
@@ -108,7 +109,7 @@ if (doIt){
             }
             newComp.openInViewer()
             newComp.time = 5;
-            saveFrame(newComp, 125);
+            saveFrame(newComp, 125, renderProfile.still);
             renderMovie(newComp);
           }
         }
