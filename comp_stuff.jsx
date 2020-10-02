@@ -22,6 +22,17 @@ function textLayers(comp){
   return text
 }
 
+function availableRenderTemplates(comp){
+  var templates = [];
+  if (comp instanceof CompItem){
+    var renderItem = app.project.renderQueue.items.add(comp);
+    var outputModule = renderItem.outputModule(1);
+    templates = outputModule.templates
+    renderItem.remove();
+  }
+  return templates
+}
+
 function findOrCreateFoler(folderName){
 
   var myFolder = null;
@@ -38,4 +49,7 @@ function findOrCreateFoler(folderName){
   return myFolder
 }
 
-
+function compFromDropDown(compWindow){
+  var mySelection = Number(compWindow.compDropdown.selection.valueOf())
+  return projectItems[mySelection]
+}
