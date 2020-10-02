@@ -2,7 +2,7 @@ function saveFrame(theComp, frameNumber){
   if (theComp instanceof CompItem){
     var renderItem = app.project.renderQueue.items.add(theComp);
     var outputModule = renderItem.outputModule(1);
-    var outputFolder = "/Users/David/Dropbox/Development/Adobe/Stills/";
+    var outputFolder = "/E/Development/Outputs/Stills/";
 
     outputModule.applyTemplate("PNG");
     outputModule.file = File(outputFolder + theComp.name + "_[#]");
@@ -18,7 +18,7 @@ function renderMovie(theComp){
   if (theComp instanceof CompItem){
     var renderItem = app.project.renderQueue.items.add(theComp);
     var outputModule = renderItem.outputModule(1);
-    var outputFolder = "/Users/David/Dropbox/Development/Adobe/Movies/";
+    var outputFolder = "/E/Development/Outputs/Clips/";
 
     outputModule.applyTemplate("PRORES 422");
     outputModule.file = File(outputFolder + theComp.name);
