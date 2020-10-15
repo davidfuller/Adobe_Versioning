@@ -4,6 +4,7 @@
 //@include "Render_Stuff.jsx"
 //@include "globals.jsx"
 //@include "File_Stuff.jsx"
+//@include "json_Stuff.jsx"
 
 //$.writeln(saveSettings(theSettings, settingsFileName));
 var theSettings = loadSettings(settingsFileName);
@@ -12,4 +13,4 @@ for (var key in theSettings){
   $.writeln(key + ": " + theSettings[key]);
 }
 
-$.writeln(getXMLFolder());
+$.writeln(saveSettingsJson(theSettings, settingsFilenameJson))
