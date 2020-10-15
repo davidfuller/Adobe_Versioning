@@ -53,3 +53,26 @@ function compFromDropDown(compWindow){
   var mySelection = Number(compWindow.compDropdown.selection.valueOf())
   return projectItems[mySelection]
 }
+function hexToRGBArray(hex){
+  var rgb = parseInt(hex, 16); 
+  var red;
+  var green;
+  var blue;
+  var valid;
+
+  if (isNaN(rgb)){
+    red = 255.0;
+    green = 255.0;
+    blue = 255.0;
+    valid = false;
+  } else {
+    red   = (rgb >>16) & 0xFF; 
+    green = (rgb >>8) & 0xFF; 
+    blue  = rgb & 0xFF;
+    valid = true;
+  }
+   	
+	var colorArray = [red/255.0, green/255.0, blue/255.0];
+	
+	return {colour: colorArray, valid: valid}
+}
