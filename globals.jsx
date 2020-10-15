@@ -1,4 +1,5 @@
 var settingsFileName = "settings.xml"
+var settingsFilenameJson = "settings.json"
 var settingsFolder = File($.fileName).parent.fsName + "/settings/";
 var macXMLFolder = "/Users/David/Dropbox/Development/Adobe/Excel/";
 var pcXMLFolder = "/C/Users/David/Documents/vscode/Adobe_Versioning/xml/";
