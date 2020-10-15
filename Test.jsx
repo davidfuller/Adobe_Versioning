@@ -8,7 +8,8 @@ var theSettings = loadSettings(settingsFileName);
 var file = new File;
 var defaultXMLFolder = getXMLFolder()
 var myXML
-var doIt  
+var doIt
+var hexColour = [];
 
 var fileWindow = getXMLFile();
 if (fileWindow.show() == 1){
@@ -62,6 +63,10 @@ if (doIt){
             $.write("Text Layer: ")
             $.writeln(Number(compWindow.textLayers[i].selection.valueOf()))
           }
+          if (compWindow.hexColours[i] instanceof EditText){
+            $.writeln(compWindow.hexColours[i].text)
+            hexColour[i] = compWindow.hexColours[i].text;
+          }
         }
         var renderProfile ={}
         if (compWindow.renderDropdowns[0] instanceof DropDownList && compWindow.renderDropdowns[0].selection != null){
@@ -98,11 +103,11 @@ if (doIt){
                   $.writeln(newTextLayers[layer].name);
                   $.writeln(textValue(newTextLayers[layer]))
                   if (promoField == 0){
-                    setTextValue(newTextLayers[layer], promoData(myXML, i).title)
+                    setTextValue(newTextLayers[layer], promoData(myXML, i).title, hexColour[0]) //"FF0D3C")
                   } else if (promoField == 1) {
-                    setTextValue(newTextLayers[layer], promoData(myXML, i).message)
+                    setTextValue(newTextLayers[layer], promoData(myXML, i).message, hexColour[1])
                   } else if (promoField == 2){
-                    setTextValue(newTextLayers[layer], promoData(myXML, i).navigation)
+                    setTextValue(newTextLayers[layer], promoData(myXML, i).navigation, hexColour[2])
                   }
                 }
               }
@@ -163,8 +168,11 @@ function textValue(layer){
     }
   }
 }
-function setTextValue(layer, text){
+function setTextValue(layer, text, hexColour){
   if ((layer != null) && layer.matchName == "ADBE Text Layer"){
-    layer.sourceText.setValue(text.toString())
+    var textDoc = layer.sourceText.value
+    textDoc.text = text
+    textDoc.fillColor = hexToRGBArray(hexColour).colour;
+    layer.sourceText.setValue(textDoc);
   }
 }

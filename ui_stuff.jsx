@@ -25,6 +25,8 @@ function createCompSettingsWindow(theComps){
   textLabel.alignment = "left"
   
   var myTextDropDown = []
+  var myTextColour = []
+  var validColour = []
   var textFromLayer = []
   var grp = []
   var myLabel = []
@@ -49,7 +51,13 @@ function createCompSettingsWindow(theComps){
       myTextDropDown[i].add("item", "Text Layers will appear here")
       myTextDropDown[i].selection = 0
       myTextDropDown[i].size = [280,-1]
-      
+
+      myTextColour[i] = grp[i].add("edittext", undefined, "Hex Colour");
+      myTextColour[i].size = [100, 16]
+            
+      validColour[i] = grp[i].add("statictext", undefined, "N");
+      validColour[i].size = [10, 16]
+
       textFromLayer[i] = grp[i].add("statictext",undefined,"")
       textFromLayer[i].size = [280, 10]
     }
@@ -102,6 +110,25 @@ function createCompSettingsWindow(theComps){
   myTextDropDown[2].onChange = function(){
     textDropDownChange(2)
   }
+
+  myTextColour[0].onChange = function(){
+    changeColourStatus(0)
+  }
+  myTextColour[1].onChange = function(){
+    changeColourStatus(1)
+  }
+  myTextColour[2].onChange = function(){
+    changeColourStatus(2)
+  }
+
+  function changeColourStatus(index){
+    var isValid = hexToRGBArray(myTextColour[index].text).valid;
+    if (isValid){
+      validColour[index].text = "Y";
+    } else {
+      validColour[index].text = "N";
+    }
+  }
   
   function textDropDownChange(index){
     var myTextLayers = textLayers(theComps[selectedComp(compDropdown)])
@@ -122,7 +149,7 @@ function createCompSettingsWindow(theComps){
   rowFive.add("button", undefined, "Cancel")
   rowFive.alignment = "right"
 
-  return {window: myWindow, compDropdown: compDropdown, textLayers: myTextDropDown, renderDropdowns: myRenderDropDown}
+  return {window: myWindow, compDropdown: compDropdown, textLayers: myTextDropDown, renderDropdowns: myRenderDropDown, hexColours: myTextColour}
 }
 
 function selectedComp(theDropdown){
