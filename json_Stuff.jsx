@@ -17,3 +17,14 @@ function saveSettingsJson(settingsObject, profileName){
       }
     }
   }
+  function loadSettingsJson(profileName){
+    var myJsonFile = new File(settingsFolder + profileName);
+    if (myJsonFile.open("r")){
+      var settingsStringJson = myJsonFile.read(); 
+      var myJSON = {}
+      myJSON = JSON.parse(settingsStringJson)
+      return myJSON
+    } else {
+      return defaultSettings;
+    }
+  }
