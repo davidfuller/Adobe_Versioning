@@ -3,8 +3,9 @@
 //@include "xmlStuff.jsx"
 //@include "Render_Stuff.jsx"
 //@include "globals.jsx"
+//@include "json_Stuff.jsx"
 
-var theSettings = loadSettings(settingsFileName);
+var theSettings = loadSettingsJson(settingsFilenameJson);
 var file = new File;
 var defaultXMLFolder = getXMLFolder()
 var myXML
@@ -72,6 +73,9 @@ if (doIt){
         if (compWindow.renderDropdowns[0] instanceof DropDownList && compWindow.renderDropdowns[0].selection != null){
           renderProfile.still = compWindow.renderDropdowns[0].selection 
         }
+        if (compWindow.renderDropdowns[1] instanceof DropDownList && compWindow.renderDropdowns[1].selection != null){
+          renderProfile.movie = compWindow.renderDropdowns[1].selection 
+        }
       }
     } else {
       $.writeln("Nothing selected")
@@ -115,7 +119,7 @@ if (doIt){
             newComp.openInViewer()
             newComp.time = 5;
             saveFrame(newComp, 125, renderProfile.still);
-            renderMovie(newComp);
+            renderMovie(newComp, renderProfile.movie);
           }
         }
       }
