@@ -145,9 +145,53 @@ function createCompSettingsWindow(theComps){
   }
   var rowFive = myWindow.add("group")
 
+  var saveProfileButton = rowFive.add("button", undefined, "Save Profile")
+  var loadProfileButton = rowFive.add("button", undefined, "Load Profile")
   rowFive.add("button", undefined, "OK")
   rowFive.add("button", undefined, "Cancel")
   rowFive.alignment = "right"
+
+  saveProfileButton.onClick = function(){
+    var mySelection = Number(compDropdown.selection.valueOf())
+    var compName = projectItems[mySelection].name
+    var profile = {
+      composition: compName
+    }
+    profile.textLayers = [];
+    profile.hexColours = [];
+    profile.renderTemplates = [];
+    for(var i = 0; i < numTextDropDowns; i++){
+      var textLayer = allTextLayers[Number(myTextDropDown[i].selection.valueOf())].name;
+      var textObj = {};
+      textObj[textLayerNames[i]] = textLayer;
+      profile.textLayers.push(textObj);
+      var hexColour = myTextColour[i].text
+      var hexObj = {};
+      hexObj[textLayerNames[i]] = hexColour;
+      profile.hexColours.push(hexObj);
+    }
+    
+    for (var i = 0; i < numRenderTemplates; i++){
+      var render = myRenderDropDown[i].selection.toString()
+      var renderObj = {}
+      renderObj[renderNames[i]] = render
+      profile.renderTemplates.push(renderObj)
+    }
+    saveSettingsJson(profile, compProfileFileName)
+  }
+
+  loadProfileButton.onClick = function(){
+    var profile = loadSettingsJson(compProfileFileName);
+    compDropdown.selection = compDropdown.find(profile.composition);
+    for (var i = 0; i < numTextDropDowns; i++){
+      myTextDropDown[i].selection = myTextDropDown[i].find(profile.textLayers[i][textLayerNames[i]])
+      myTextColour[i].text = profile.hexColours[i][textLayerNames[i]]
+      changeColourStatus(i)
+    }
+    for (var i = 0; i < numRenderTemplates; i++){
+      myRenderDropDown[i].selection = myRenderDropDown[i].find(profile.renderTemplates[i][renderNames[i]]);
+    }
+  }
 
   return {window: myWindow, compDropdown: compDropdown, textLayers: myTextDropDown, renderDropdowns: myRenderDropDown, hexColours: myTextColour}
 }

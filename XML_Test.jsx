@@ -7,7 +7,7 @@
 //@include "json_Stuff.jsx"
 
 //$.writeln(saveSettings(theSettings, settingsFileName));
-var theSettings = loadSettings(settingsFileName);
+var theSettings = loadSettingsJson(settingsFilenameJson);
 
 for (var key in theSettings){
   $.writeln(key + ": " + theSettings[key]);
