@@ -26,13 +26,13 @@ function saveFrame(theComp, frameNumber, renderTemplate){
     }
   }
 }
-function renderMovie(theComp){
+function renderMovie(theComp, renderTemplate){
   if (theComp instanceof CompItem){
     var renderItem = app.project.renderQueue.items.add(theComp);
     var outputModule = renderItem.outputModule(1);
     var outputFolder = "/Users/David/Dropbox/Development/Adobe/Movies/";
 
-    outputModule.applyTemplate("PRORES 422");
+    outputModule.applyTemplate(renderTemplate);
     outputModule.file = File(outputFolder + theComp.name);
     app.project.renderQueue.render();
   } 
