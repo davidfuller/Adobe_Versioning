@@ -4,6 +4,7 @@
 //@include "Render_Stuff.jsx"
 //@include "globals.jsx"
 //@include "json_Stuff.jsx"
+//@include "File_Stuff.jsx"
 
 var theSettings = loadSettingsJson(settingsFilenameJson);
 var file = new File;
