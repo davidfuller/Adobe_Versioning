@@ -177,11 +177,25 @@ function createCompSettingsWindow(theComps){
       renderObj[renderNames[i]] = render
       profile.renderTemplates.push(renderObj)
     }
-    saveSettingsJson(profile, compProfileFileName)
+
+    var profileFileName = getProfileSaveFilename()
+    if (profileFileName != null){
+      saveSettingsJson(profile, profileFileName.name)
+    } else {
+      saveSettingsJson(profile, compProfileFileName)
+    }
+    
   }
 
   loadProfileButton.onClick = function(){
-    var profile = loadSettingsJson(compProfileFileName);
+    var profileFileName = getProfileLoadName()
+    var profile
+    if (profileFileName != null){
+      profile = loadSettingsJson(profileFileName.name);
+    } else {
+      profile = loadSettingsJson(compProfileFileName);
+    }
+    
     compDropdown.selection = compDropdown.find(profile.composition);
     for (var i = 0; i < numTextDropDowns; i++){
       myTextDropDown[i].selection = myTextDropDown[i].find(profile.textLayers[i][textLayerNames[i]])
@@ -265,5 +279,15 @@ function displayPromos(){
   var cancelButton = grp2.add("button", undefined, "Cancel");
   
   return {window: win, list: promoList}
+}
+
+function getProfileSaveFilename(){
+  var mySettingsFolder = new File(settingsFolder + compProfileFileName)
+  return mySettingsFolder.saveDlg("Choose profile filename","Json file: *.json");
+}
+
+function getProfileLoadName(){
+  var mySettingsFolder = new Folder(settingsFolder)
+  return mySettingsFolder.openDlg("Choose profile","Json file: *.json", false)
 }
 
