@@ -22,6 +22,41 @@ function textLayers(comp){
   return text
 }
 
+function footageLayers(comp){
+  var footage = []
+  if (comp instanceof CompItem){
+    var myLayers = comp.layers
+    for (var i = 1; i <= myLayers.length; i++){
+      var testLayer = myLayers[i]
+      if (testLayer instanceof AVLayer){
+        if (testLayer.source instanceof FootageItem){
+          if (testLayer.source.mainSource instanceof FileSource){
+            footage.push(testLayer)
+          }
+        } else {
+          if (testLayer.source instanceof CompItem){
+            footage.push(testLayer)
+          }
+        }
+      }
+    }
+  }
+  return footage
+}
+
+function footageDisplay(layer){
+  if (layer instanceof AVLayer){
+    if ((layer.source instanceof FootageItem) && (layer.source.mainSource instanceof FileSource)){
+      return "FOOT: " + layer.source.name
+    } else {
+      if (layer.source instanceof CompItem){
+        return "COMP: " + layer.source.name
+      }
+    }
+  }
+}
+
+
 function availableRenderTemplates(comp){
   var templates = [];
   if (comp instanceof CompItem){
@@ -33,7 +68,7 @@ function availableRenderTemplates(comp){
   return templates
 }
 
-function findOrCreateFoler(folderName){
+function findOrCreateFolder(folderName){
 
   var myFolder = null;
   for (var i = 1; i <= app.project.numItems; i++){
