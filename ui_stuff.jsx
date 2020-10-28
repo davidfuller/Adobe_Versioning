@@ -32,6 +32,7 @@ function createCompSettingsWindow(theComps){
   var myLabel = []
   var myRenderDropDown = [];
   var myRenderLabel = [];
+  var myClipDropDown
 
   var loopValue = numTextDropDowns;
   if (numRenderTemplates > numTextDropDowns){
@@ -45,7 +46,7 @@ function createCompSettingsWindow(theComps){
 
     if (i < numTextDropDowns){
       myLabel[i] = grp[i].add("statictext", undefined, myFields[i]);
-      myLabel[i].size = [60,10];
+      myLabel[i].size = [60,12];
   
       myTextDropDown[i] = grp[i].add("dropdownlist",undefined,[])
       myTextDropDown[i].add("item", "Text Layers will appear here")
@@ -70,10 +71,19 @@ function createCompSettingsWindow(theComps){
       myRenderDropDown[i].selection = 0
       myRenderDropDown[i].size = [280, -1]
     }
-
-    
   }
-  
+  var clipGroupNum = loopValue + 1
+  grp[clipGroupNum] = rowThree.add("group")
+  grp[clipGroupNum].orientation = "row"
+  grp[clipGroupNum].alignment = "left"
+  myLabel[clipGroupNum] = grp[clipGroupNum].add("statictext", undefined, "Clip");
+  myLabel[clipGroupNum].size = [60,12];
+  myClipDropDown = grp[clipGroupNum].add("dropdownlist",undefined,[])
+  myClipDropDown.add("item", "Footage and Comp Layers will appear here")
+  myClipDropDown.selection = 0
+  myClipDropDown.size = [280,-1]
+
+
   setActive.onClick = function(){
     if (app.project.activeItem != null){
       compDropdown.selection = compDropdown.find(app.project.activeItem.name)
@@ -83,6 +93,7 @@ function createCompSettingsWindow(theComps){
   compDropdown.onChange = function(){
     selectCompIndex = selectedComp(compDropdown)
     var myTextLayers = textLayers(theComps[selectCompIndex])
+    var myFootageLayers = footageLayers(theComps[selectCompIndex])
     $.writeln("Change: " + compDropdown.selection.toString())
     
     for (var i = 0; i < numTextDropDowns; i++){
@@ -97,6 +108,10 @@ function createCompSettingsWindow(theComps){
       for (var j = 0; j < renderTemplates.length; j++){
         myRenderDropDown[i].add("item", renderTemplates[j]);
       }
+    }
+    myClipDropDown.removeAll();
+    for (var j = 0; j < myFootageLayers.length; j++){
+      myClipDropDown.add("item", footageDisplay(myFootageLayers[j]));
     }
   }
   
@@ -178,6 +193,8 @@ function createCompSettingsWindow(theComps){
       profile.renderTemplates.push(renderObj)
     }
 
+    profile.clipLayer = myClipDropDown.selection.toString();
+
     var profileFileName = getProfileSaveFilename()
     if (profileFileName != null){
       saveSettingsJson(profile, profileFileName.name)
@@ -205,6 +222,7 @@ function createCompSettingsWindow(theComps){
     for (var i = 0; i < numRenderTemplates; i++){
       myRenderDropDown[i].selection = myRenderDropDown[i].find(profile.renderTemplates[i][renderNames[i]]);
     }
+    myClipDropDown.selection = myClipDropDown.find(profile.clipLayer)
   }
 
   return {window: myWindow, compDropdown: compDropdown, textLayers: myTextDropDown, renderDropdowns: myRenderDropDown, hexColours: myTextColour}
@@ -259,8 +277,8 @@ function displayPromos(){
 
   var grp1 = outerGrp.add("group")
   var promoList = grp1.add("listbox", undefined, [], 
-                              {numberOfColumns: 4, showHeaders: true, 
-                               columnTitles: ["Title", "Message", "Navigation", "Comp Name"],
+                              {numberOfColumns: 5, showHeaders: true, 
+                               columnTitles: ["Title", "Message", "Navigation", "Promo File", "Comp Name"],
                                multiselect: true});
   var pData = null;
   for (var i = 0; i < promoCount(myXML); i++){
@@ -268,7 +286,8 @@ function displayPromos(){
     var tempItem = promoList.add("item", pData.title)
     tempItem.subItems[0].text = pData.message
     tempItem.subItems[1].text = pData.navigation
-    tempItem.subItems[2].text = promoCompName(pData)
+    tempItem.subItems[2].text = pData.displayFile
+    tempItem.subItems[3].text = promoCompName(pData)
     tempItem.selected = true;
   }
   

@@ -12,7 +12,9 @@ function promoData(theXML, itemNo){
   var theData = myXML.elements()[0].elements()[itemNo]
   var tempItem = { title: theData.elements()[0],
                     message: theData.elements()[1],
-                    navigation: theData.elements()[2] }
+                    navigation: theData.elements()[2],
+                    fullFile: theData.elements()[3], 
+                    displayFile: displayName(theData.elements()[3])}
   return tempItem
 
 }
