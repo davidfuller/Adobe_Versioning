@@ -91,36 +91,40 @@ if (doIt){
   }
 
   if (myComp != null){
-    var myFolder = findOrCreateFoler("MuVi2 Temp");
+    var myFolder = findOrCreateFolder("MuVi2 Temp");
     if ((myFolder != null) && (myFolder instanceof FolderItem)){
-      if (myComp instanceof CompItem){
-        var baseName = myComp.name
-        for (var i= 0; i < promoCount(myXML); i++){
-          if (selectedPromos[i]){
-            var newComp = myComp.duplicate();
-            newComp.parentFolder = myFolder;  
-            newComp.name = replacesSpacesWithUnderscores(baseName + "_" + promoCompName(promoData(myXML,i)));
-            var newTextLayers = textLayers(newComp)
-            for (var layer = 0; layer < newTextLayers.length; layer++){
-              for (var promoField = 0; promoField < selectedTextlayers.length; promoField++){
-                if (newTextLayers[layer].name == selectedTextlayers[promoField].name){
-                  $.write(layer + ": ");
-                  $.writeln(newTextLayers[layer].name);
-                  $.writeln(textValue(newTextLayers[layer]))
-                  if (promoField == 0){
-                    setTextValue(newTextLayers[layer], promoData(myXML, i).title, hexColour[0]) //"FF0D3C")
-                  } else if (promoField == 1) {
-                    setTextValue(newTextLayers[layer], promoData(myXML, i).message, hexColour[1])
-                  } else if (promoField == 2){
-                    setTextValue(newTextLayers[layer], promoData(myXML, i).navigation, hexColour[2])
+      var myTempFootageFolder = findOrCreateFolder("Temp Footage")
+      if ((myTempFootageFolder != null) && (myTempFootageFolder instanceof FolderItem)){
+        myTempFootageFolder.parentFolder = myFolder
+        if (myComp instanceof CompItem){
+          var baseName = myComp.name
+          for (var i= 0; i < promoCount(myXML); i++){
+            if (selectedPromos[i]){
+              var newComp = myComp.duplicate();
+              newComp.parentFolder = myFolder;  
+              newComp.name = replacesSpacesWithUnderscores(baseName + "_" + promoCompName(promoData(myXML,i)));
+              var newTextLayers = textLayers(newComp)
+              for (var layer = 0; layer < newTextLayers.length; layer++){
+                for (var promoField = 0; promoField < selectedTextlayers.length; promoField++){
+                  if (newTextLayers[layer].name == selectedTextlayers[promoField].name){
+                    $.write(layer + ": ");
+                    $.writeln(newTextLayers[layer].name);
+                    $.writeln(textValue(newTextLayers[layer]))
+                    if (promoField == 0){
+                      setTextValue(newTextLayers[layer], promoData(myXML, i).title, hexColour[0]) //"FF0D3C")
+                    } else if (promoField == 1) {
+                      setTextValue(newTextLayers[layer], promoData(myXML, i).message, hexColour[1])
+                    } else if (promoField == 2){
+                      setTextValue(newTextLayers[layer], promoData(myXML, i).navigation, hexColour[2])
+                    }
                   }
                 }
               }
+              newComp.openInViewer()
+              newComp.time = 5;
+              saveFrame(newComp, 125, renderProfile.still);
+              renderMovie(newComp, renderProfile.movie);
             }
-            newComp.openInViewer()
-            newComp.time = 5;
-            saveFrame(newComp, 125, renderProfile.still);
-            renderMovie(newComp, renderProfile.movie);
           }
         }
       }
