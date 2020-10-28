@@ -7,3 +7,13 @@ function createFolderIfNeeded(theFolder){
     }
   }
 }
+
+function displayName(fullPath){
+  var temp = new File(fullPath)
+  if (temp.exists){
+    return temp.displayName
+  } else {
+    return "[NO PROMO FILE]"
+  }
+  
+}
