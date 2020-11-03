@@ -1,3 +1,6 @@
+/**
+ * @param {Folder} theFolder 
+ */
 function createFolderIfNeeded(theFolder){
   if (theFolder instanceof Folder){
     if (!theFolder.exists){
@@ -7,7 +10,9 @@ function createFolderIfNeeded(theFolder){
     }
   }
 }
-
+/** 
+ *  @param {string} fullPath
+ */
 function displayName(fullPath){
   var temp = new File(fullPath)
   if (temp.exists){
