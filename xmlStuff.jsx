@@ -14,9 +14,11 @@ function promoData(theXML, itemNo){
                     message: theData.elements()[1],
                     navigation: theData.elements()[2],
                     fullFile: theData.elements()[3], 
-                    displayFile: displayName(theData.elements()[3])}
+                    displayFile: displayName(theData.elements()[3]),
+                    backgroundName: theData.elements()[4],
+                    logoName: theData.elements()[5],
+                    profile: theData.elements()[6]}
   return tempItem
-
 }
 
 function saveSettings(settingsObject, profileName){
@@ -76,5 +78,5 @@ function promoCompName(pData){
   return replacesSpacesWithUnderscores(pData.title.toUpperCase() + "_" + pData.message.toUpperCase() + "_" +  pData.navigation.toUpperCase());
 }
 function replacesSpacesWithUnderscores(theText){
-  return theText.replace(/\s/g, "_");
+  return theText.replace(/\s/g, "_").replace(/__/g, "_");
 }
