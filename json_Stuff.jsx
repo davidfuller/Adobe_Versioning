@@ -17,6 +17,36 @@ function saveSettingsJson(settingsObject, profileName){
       }
     }
   }
+  /**
+   * @typedef {object} profile 
+   * @property {string} composition
+   * @property {Array} textLayers
+   * @property {Array} hexColours
+   * @property {Array} renderTemplates
+   * @property {string} clipLayer
+   * @property {string} backgroundLayer
+   * @property {string} logoLayer
+   * /
+  
+   /**
+   * @param {string} profileName 
+   * @returns {profile}
+   */
+  function loadProfileJson(profileName){
+    var myJsonFile = new File(settingsFolder + profileName);
+    if (myJsonFile.open("r")){
+      var settingsStringJson = myJsonFile.read(); 
+      /**
+       * @type {profile}
+       */
+      var myJSON;
+      myJSON = JSON.parse(settingsStringJson)
+      return myJSON
+    }
+  }
+  /**
+   * @param {string} profileName 
+   */
   function loadSettingsJson(profileName){
     var myJsonFile = new File(settingsFolder + profileName);
     if (myJsonFile.open("r")){
