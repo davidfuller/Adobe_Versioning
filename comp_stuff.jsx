@@ -1,14 +1,29 @@
-function compItems(){
+/**
+ * @param {string} [folderName]
+ * @returns {Array<CompItem>}
+ */
+function compItems(folderName){
   var comps = []
   var myItems = app.project.items
   for (var i = 1; i <= myItems.length; i++){
-    if (myItems[i] instanceof CompItem){
-      comps.push(myItems[i])
+    var test = myItems[i];
+    if (test instanceof CompItem){
+      if (!folderName){
+        comps.push(test)
+      } else {
+        if (compItemWithinFolder(test, folderName)){
+          comps.push(test)
+        }
+      }
     }
   }
   return comps
 }
 
+/**
+ * 
+ * @param {CompItem} comp 
+ */
 function textLayers(comp){
   var text = []
   if (comp instanceof CompItem){
@@ -21,7 +36,17 @@ function textLayers(comp){
   }
   return text
 }
-
+/**
+ * 
+ * @typedef {Object} FootageObject
+ * @property {AVLayer} layer
+ * @property {string} type
+ */
+/**
+ * 
+ * @param {CompItem} comp 
+ * @returns {Array<FootageObject>}
+ */
 function footageLayers(comp){
   var footage = []
   if (comp instanceof CompItem){
@@ -31,11 +56,13 @@ function footageLayers(comp){
       if (testLayer instanceof AVLayer){
         if (testLayer.source instanceof FootageItem){
           if (testLayer.source.mainSource instanceof FileSource){
-            footage.push(testLayer)
+            var temp = {layer: testLayer, type: "FOOT"}
+            footage.push(temp)
           }
         } else {
           if (testLayer.source instanceof CompItem){
-            footage.push(testLayer)
+            var temp = {layer: testLayer, type: "COMP"}
+            footage.push(temp)
           }
         }
       }
@@ -44,15 +71,65 @@ function footageLayers(comp){
   return footage
 }
 
-function footageDisplay(layer){
-  if (layer instanceof AVLayer){
-    if ((layer.source instanceof FootageItem) && (layer.source.mainSource instanceof FileSource)){
-      return "FOOT: " + layer.source.name
-    } else {
-      if (layer.source instanceof CompItem){
-        return "COMP: " + layer.source.name
+/**
+ * 
+ * @param {CompItem} comp 
+ */
+function compLayers(comp){
+  var myComps = []
+  if (comp instanceof CompItem){
+    var myLayers = comp.layers
+    for (var i = 1; i <= myLayers.length; i++){
+      var testLayer = myLayers[i]
+      if (testLayer instanceof AVLayer){
+        if (testLayer.source instanceof CompItem){
+          myComps.push(testLayer)
+        }
       }
     }
+  }
+  return myComps
+}
+
+function footageDisplayFilename(myFootage){
+  var theFile = footageFile(myFootage)
+  if (theFile != null){
+    return displayName(theFile)
+  } else {
+    return "Footage layer not found"
+  }
+}
+
+function footageFile(myFootage){
+  if (myFootage.type == "FOOT"){
+    return myFootage.layer.source.mainSource.file;
+  } else {
+    var theLayers = footageLayers(myFootage.layer.source);
+    if (theLayers.length > 0){
+      var found = false;
+      for (var i = 0; i < theLayers.length; i++){
+        var testLayer = theLayers[i].layer;
+        if ((testLayer instanceof AVLayer) && (testLayer.source instanceof FootageItem)){
+          found = true;
+          return testLayer.source.mainSource.file;
+        }
+      }
+      if (!found){
+        return null
+      }
+    } else {
+      return null
+    }
+  }
+}
+
+/**
+ * 
+ * @param {FootageObject} footageObj 
+ */
+function footageDisplay(footageObj){
+  if (footageObj.layer instanceof AVLayer){
+    return footageObj.type +  ": " + footageObj.layer.source.name
   }
 }
 
@@ -68,24 +145,36 @@ function availableRenderTemplates(comp){
   return templates
 }
 
+/**
+ * 
+ * @param {string} folderName 
+ * @returns {FolderItem}
+ */
 function findOrCreateFolder(folderName){
-
   var myFolder = null;
   for (var i = 1; i <= app.project.numItems; i++){
-    if ((app.project.item(i) instanceof FolderItem) && app.project.item(i).name == folderName){
-      myFolder = app.project.item(i);
-      break;
+    var temp = app.project.item(i)
+    if (temp.name == folderName){
+      if (temp instanceof FolderItem){ 
+        myFolder = temp;
+        break;
+      }
     }
   }
   if (myFolder == null){
     myFolder = app.project.items.addFolder(folderName)
   }
-
   return myFolder
 }
+/**
+ * 
+ * @param {*} compWindow 
+ * @param {*} projectItems 
+ */
 
-function compFromDropDown(compWindow){
-  var mySelection = Number(compWindow.compDropdown.selection.valueOf())
+function compFromDropDown(compWindow, projectItems){
+  var mySelection = compWindow.compDropdown.selection.index
+  
   return projectItems[mySelection]
 }
 function hexToRGBArray(hex){
@@ -110,4 +199,151 @@ function hexToRGBArray(hex){
 	var colorArray = [red/255.0, green/255.0, blue/255.0];
 	
 	return {colour: colorArray, valid: valid}
+}
+
+/**
+ * 
+ * @param {CompItem} comp 
+ * @param {string} folderName 
+ * @returns {boolean}
+ */
+function compItemWithinFolder(comp, folderName){
+
+  var testFolder = comp.parentFolder
+  while (testFolder != app.project.rootFolder){
+    if (testFolder.name == folderName){
+      return true
+    }
+    testFolder = testFolder.parentFolder
+  }
+  return false
+}
+
+/**
+ * 
+ * @param {string} compName 
+ * @returns {CompItem}
+ */
+function compFromName(compName){
+  var theComps = compItems()
+  for (var i = 0; i < theComps.length; i++){
+    if (theComps[i].name == compName){
+      return theComps[i]
+    }
+  }
+  return null;
+}
+
+function processData(){
+  
+  var myFolder = findOrCreateFolder("MuVi2 Temp");
+  var myTempFootageFolder = findOrCreateFolder("Temp Footage");
+  myTempFootageFolder.parentFolder = myFolder
+  for (var i= 0; i < promoCount(myXML); i++){
+    if (selectedPromos[i]){
+      var promo = promoData(myXML,i);
+      var profile = loadProfileFromPromoData(promo);
+      var myComp = compFromName(profile.composition);
+      var baseName = myComp.name
+      var newComp = myComp.duplicate();
+      newComp.parentFolder = myFolder;  
+      newComp.name = replacesSpacesWithUnderscores(baseName + "_" + promoCompName(promoData(myXML,i)));
+      var newTextLayers = textLayers(newComp)
+      for (var textLayer = 0; textLayer < textLayerNames.length; textLayer++){
+        var thisTextLayer = getTextLayer(textLayerNames[textLayer],profile)
+        for (var layer = 0; layer < newTextLayers.length; layer++){
+          if (newTextLayers[layer].name == thisTextLayer){
+            setTextValue(newTextLayers[layer],promoData(myXML,i)[textLayerNames[textLayer].toLowerCase()], getHexColour(textLayerNames[textLayer], profile))
+          }
+        }
+      }
+      doThePromoClip(i, myTempFootageFolder, myComp, newComp, profile);
+      var bgCompName = promoData(myXML, i).backgroundName;
+      var logoCompName = promoData(myXML, i).logoName;
+      doBackgroundAndLogo(myComp, newComp, profile, bgCompName, logoCompName);
+      newComp.openInViewer()
+      newComp.time = 5;
+
+      var renderProfile = getRenderProfile(profile)
+      saveFrame(newComp, 125, renderProfile.still);
+      renderMovie(newComp, renderProfile.clip);
+
+    }
+  }
+}
+/**
+ * 
+ * @param {number} promoNum 
+ * @param {FolderItem} tempFolder 
+ * @param {CompItem} originalComp
+ * @param {CompItem} newComp
+ * @param {profile} profile
+ */
+function doThePromoClip(promoNum, tempFolder, originalComp, newComp, profile){
+  var impOpts = new ImportOptions(promoData(myXML, promoNum).fullFile);
+  if (impOpts.canImportAs(ImportAsType.FOOTAGE)){
+    impOpts.importAs = ImportAsType.FOOTAGE;
+    var newFootage = app.project.importFile(impOpts);
+    newFootage.parentFolder = tempFolder;
+  }
+  var footageObj = getFootageLayer(originalComp, profile);
+  if (footageObj.type == "COMP"){
+    var footageComp = footageObj.layer.source;
+    var newFootageComp =footageComp.duplicate();
+    newFootageComp.parentFolder = tempFolder;
+    newFootageComp.name = fileNameWithoutExtension(impOpts.file)
+
+    var newCompFootageLayers = footageLayers(newComp)
+    for (var j = 0; j < newCompFootageLayers.length; j++){
+      if (newCompFootageLayers[j].type == "COMP"){
+        if (newCompFootageLayers[j].layer.source.name == footageObj.layer.source.name){
+          newCompFootageLayers[j].layer.replaceSource(newFootageComp, false)
+        }
+      }
+    }
+    var newFootageLayers = footageLayers(newFootageComp)
+    for (var j = 0; j < newFootageLayers.length; j++){
+      if (newFootageLayers[j].type == "FOOT"){
+        if (newFootage instanceof FootageItem){
+          newFootageLayers[j].layer.replaceSource(newFootage, false)
+        }
+      }
+    }
+  }
+}
+/**
+ * 
+ * @param {CompItem} originalComp 
+ * @param {CompItem} newComp 
+ * @param {profile} profile 
+ * @param {string} backgroundName 
+ * @param {string} logoName 
+ */
+function doBackgroundAndLogo(originalComp, newComp, profile, backgroundName, logoName){
+  var backgroundLayer = getCompLayer(originalComp, profile.backgroundLayer);
+  var logoLayer = getCompLayer(originalComp, profile.logoLayer);
+  
+  var bgComp = backgroundLayer.source
+  var logoComp = logoLayer.source
+
+  var possComps = compItems("CHANNEL_PACKS")
+  
+  for (var j = 0; j < possComps.length; j++){
+    if (possComps[j].name == backgroundName){
+      var newBgComp = possComps[j]
+    }
+    if (possComps[j].name == logoName){
+      var newLogoComp = possComps[j]
+    }
+  }
+
+  var newLayers = compLayers(newComp)
+  for (var j = 0; j < newLayers.length; j++){
+    if (newLayers[j].source.name == bgComp.name){
+      newLayers[j].replaceSource(newBgComp, false)
+    }
+    if (newLayers[j].source.name == logoComp.name){
+      newLayers[j].replaceSource(newLogoComp, false)
+    }
+  }
 }
