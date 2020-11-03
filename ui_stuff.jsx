@@ -1,3 +1,20 @@
+/**
+ * @typedef {Object} ProfileWindow
+ * @property {Window} window
+ * @property {DropDownList} compDropdown
+ * @property {Array<DropDownList>} textLayers
+ * @property {Array<DropDownList>} renderDropdowns
+ * @property {Array<EditText>} hexColours
+ * @property {DropDownList} clipDropdown
+ * @property {DropDownList} backgroundDropDown
+ * @property {DropDownList} logoDropDown
+ */
+  
+/**
+ * 
+ * @param {Array<CompItem>} theComps 
+ * @returns {ProfileWindow}
+ */
 function createCompSettingsWindow(theComps){
   var numTextDropDowns = 3;
   var numRenderTemplates = 2;
@@ -32,7 +49,12 @@ function createCompSettingsWindow(theComps){
   var myLabel = []
   var myRenderDropDown = [];
   var myRenderLabel = [];
-  var myClipDropDown
+  var myClipDropDown;
+  var myBackgroundDropDown;
+  /**
+   * @type {DropDownList}
+   */
+  var myLogoDropDown;
 
   var loopValue = numTextDropDowns;
   if (numRenderTemplates > numTextDropDowns){
@@ -82,6 +104,34 @@ function createCompSettingsWindow(theComps){
   myClipDropDown.add("item", "Footage and Comp Layers will appear here")
   myClipDropDown.selection = 0
   myClipDropDown.size = [280,-1]
+  var clipName = grp[clipGroupNum].add("statictext",undefined,"")
+  clipName.size = [280,12]
+
+  var backgroundGroupNum = clipGroupNum + 1;
+  grp[backgroundGroupNum] = rowThree.add("group")
+  grp[backgroundGroupNum].orientation = "row"
+  grp[backgroundGroupNum].alignment = "left"
+  myLabel[backgroundGroupNum] = grp[backgroundGroupNum].add("statictext", undefined, "Background");
+  myLabel[backgroundGroupNum].size = [60,12];
+  myBackgroundDropDown = grp[backgroundGroupNum].add("dropdownlist",undefined,[])
+  myBackgroundDropDown.add("item", "Comp Layers will appear here")
+  myBackgroundDropDown.selection = 0
+  myBackgroundDropDown.size = [280,-1]
+  var backgroundName = grp[backgroundGroupNum].add("statictext",undefined,"")
+  backgroundName.size = [280,12]
+
+  var logoGroupNum = backgroundGroupNum + 1;
+  grp[logoGroupNum] = rowThree.add("group")
+  grp[logoGroupNum].orientation = "row"
+  grp[logoGroupNum].alignment = "left"
+  myLabel[logoGroupNum] = grp[logoGroupNum].add("statictext", undefined, "Logo");
+  myLabel[logoGroupNum].size = [60,12];
+  myLogoDropDown = grp[logoGroupNum].add("dropdownlist",undefined,[])
+  myLogoDropDown.add("item", "Comp Layers will appear here")
+  myLogoDropDown.selection = 0
+  myLogoDropDown.size = [280,-1]
+  var logoName = grp[logoGroupNum].add("statictext",undefined,"")
+  logoName.size = [280,12]
 
 
   setActive.onClick = function(){
@@ -94,6 +144,7 @@ function createCompSettingsWindow(theComps){
     selectCompIndex = selectedComp(compDropdown)
     var myTextLayers = textLayers(theComps[selectCompIndex])
     var myFootageLayers = footageLayers(theComps[selectCompIndex])
+    var myCompLayers = compLayers(theComps[selectCompIndex])
     $.writeln("Change: " + compDropdown.selection.toString())
     
     for (var i = 0; i < numTextDropDowns; i++){
@@ -112,6 +163,14 @@ function createCompSettingsWindow(theComps){
     myClipDropDown.removeAll();
     for (var j = 0; j < myFootageLayers.length; j++){
       myClipDropDown.add("item", footageDisplay(myFootageLayers[j]));
+    }
+    myBackgroundDropDown.removeAll();
+    for (var j = 0; j < myCompLayers.length; j++){
+      myBackgroundDropDown.add("item", myCompLayers[j].name);
+    }
+    myLogoDropDown.removeAll();
+    for (var j = 0; j < myCompLayers.length; j++){
+      myLogoDropDown.add("item", myCompLayers[j].name);
     }
   }
   
@@ -134,6 +193,23 @@ function createCompSettingsWindow(theComps){
   }
   myTextColour[2].onChange = function(){
     changeColourStatus(2)
+  }
+
+  myClipDropDown.onChange = function(){
+    if (myClipDropDown.selection != null){
+      clipName.text = footageDisplayFilename(selectedFootageLayer(theComps[selectCompIndex], myClipDropDown)); 
+    }
+  }
+
+  myBackgroundDropDown.onChange = function(){
+    if (myBackgroundDropDown.selection != null){
+      backgroundName.text = selectedCompLayer(theComps[selectCompIndex], myBackgroundDropDown).source.name; 
+    }
+  }
+  myLogoDropDown.onChange = function(){
+    if (myLogoDropDown.selection != null){
+      logoName.text = selectedCompLayer(theComps[selectCompIndex], myLogoDropDown).source.name; 
+    }
   }
 
   function changeColourStatus(index){
@@ -163,12 +239,12 @@ function createCompSettingsWindow(theComps){
   var saveProfileButton = rowFive.add("button", undefined, "Save Profile")
   var loadProfileButton = rowFive.add("button", undefined, "Load Profile")
   rowFive.add("button", undefined, "OK")
-  rowFive.add("button", undefined, "Cancel")
   rowFive.alignment = "right"
 
   saveProfileButton.onClick = function(){
     var mySelection = Number(compDropdown.selection.valueOf())
-    var compName = projectItems[mySelection].name
+    var compName = theComps[mySelection].name
+    var allTextLayers = textLayers(theComps[mySelection]);
     var profile = {
       composition: compName
     }
@@ -194,6 +270,8 @@ function createCompSettingsWindow(theComps){
     }
 
     profile.clipLayer = myClipDropDown.selection.toString();
+    profile.backgroundLayer = myBackgroundDropDown.selection.toString();
+    profile.logoLayer = myLogoDropDown.selection.toString();
 
     var profileFileName = getProfileSaveFilename()
     if (profileFileName != null){
@@ -208,9 +286,9 @@ function createCompSettingsWindow(theComps){
     var profileFileName = getProfileLoadName()
     var profile
     if (profileFileName != null){
-      profile = loadSettingsJson(profileFileName.name);
+      profile = loadProfileJson(profileFileName.name);
     } else {
-      profile = loadSettingsJson(compProfileFileName);
+      profile = loadProfileJson(compProfileFileName);
     }
     
     compDropdown.selection = compDropdown.find(profile.composition);
@@ -223,9 +301,11 @@ function createCompSettingsWindow(theComps){
       myRenderDropDown[i].selection = myRenderDropDown[i].find(profile.renderTemplates[i][renderNames[i]]);
     }
     myClipDropDown.selection = myClipDropDown.find(profile.clipLayer)
+    myBackgroundDropDown.selection = myBackgroundDropDown.find(profile.backgroundLayer)
+    myLogoDropDown.selection = myLogoDropDown.find(profile.logoLayer)
   }
 
-  return {window: myWindow, compDropdown: compDropdown, textLayers: myTextDropDown, renderDropdowns: myRenderDropDown, hexColours: myTextColour}
+  return {window: myWindow, compDropdown: compDropdown, textLayers: myTextDropDown, renderDropdowns: myRenderDropDown, hexColours: myTextColour, clipDropdown: myClipDropDown, backgroundDropDown: myBackgroundDropDown, logoDropDown: myLogoDropDown}
 }
 
 function selectedComp(theDropdown){
@@ -248,11 +328,22 @@ function getXMLFile(){
 
   var grp2 = win.add("group");
   grp2.orientation = "row";
-  grp2.alignment = "right"
-  var okButton = grp2.add("button", undefined, "OK");
-  var cancelButton = grp2.add("button", undefined, "Cancel");
+  grp2.alignment = "left";
+
+  var profileButton = grp2.add("button", undefined, "Profiles")
+
+
+  var grp3 = win.add("group");
+  grp3.orientation = "row";
+  grp3.alignment = "right"
+  var okButton = grp3.add("button", undefined, "OK");
+  var cancelButton = grp3.add("button", undefined, "Cancel");
 
   fileButton.onClick = fileButtonClick ;
+
+  profileButton.onClick = function(){
+    showCompWindow()
+  }
  
   return win
 
@@ -308,5 +399,29 @@ function getProfileSaveFilename(){
 function getProfileLoadName(){
   var mySettingsFolder = new Folder(settingsFolder)
   return mySettingsFolder.openDlg("Choose profile","Json file: *.json", false)
+}
+/**
+ * 
+ * @param {CompItem} theComp 
+ * @param {DropDownList} theDrop 
+ */
+function selectedFootageLayer(theComp, theDrop){
+  if (theDrop.selection instanceof ListItem){
+    return footageLayers(theComp)[theDrop.selection.index]
+  } else {
+    return null;
+  }
+}
+/**
+ * 
+ * @param {CompItem} theComp 
+ * @param {DropDownList} theDrop 
+ */
+function selectedCompLayer(theComp, theDrop){
+  if (theDrop.selection instanceof ListItem){
+    return compLayers(theComp)[theDrop.selection.index]
+  } else {
+    return null;
+  }
 }
 
