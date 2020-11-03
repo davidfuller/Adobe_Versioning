@@ -5,6 +5,8 @@
 //@include "globals.jsx"
 //@include "json_Stuff.jsx"
 //@include "File_Stuff.jsx"
+//@include "Profile_stuff.jsx"
+//@include "Generic.jsx"
 
 var theSettings = loadSettingsJson(settingsFilenameJson);
 var file = new File;
@@ -47,92 +49,14 @@ if (doIt){
   var pData = promoData(myXML,1)
   $.writeln(pData.title)
 
-
-  var projectItems = compItems();
-  var compWindow = createCompSettingsWindow(projectItems);
-  var myComp = null;
-
-  var selectedTextlayers = []
-  
-  if (compWindow.window.show() == 1){
-    if (compWindow.compDropdown instanceof DropDownList && compWindow.compDropdown.selection != null) {
-      myComp = compFromDropDown(compWindow)
-      if (myComp != null){
-        var allTextLayers = textLayers(myComp);
-        for (var i = 0; i < compWindow.textLayers.length; i++){
-          if (compWindow.textLayers[i] instanceof DropDownList && compWindow.textLayers[i].selection != null) {
-            selectedTextlayers.push(allTextLayers[Number(compWindow.textLayers[i].selection.valueOf())])
-            $.write("Text Layer: ")
-            $.writeln(Number(compWindow.textLayers[i].selection.valueOf()))
-          }
-          if (compWindow.hexColours[i] instanceof EditText){
-            $.writeln(compWindow.hexColours[i].text)
-            hexColour[i] = compWindow.hexColours[i].text;
-          }
-        }
-        var renderProfile ={}
-        if (compWindow.renderDropdowns[0] instanceof DropDownList && compWindow.renderDropdowns[0].selection != null){
-          renderProfile.still = compWindow.renderDropdowns[0].selection 
-        }
-        if (compWindow.renderDropdowns[1] instanceof DropDownList && compWindow.renderDropdowns[1].selection != null){
-          renderProfile.movie = compWindow.renderDropdowns[1].selection 
-        }
-      }
-    } else {
-      $.writeln("Nothing selected")
-    }
-  } else {
-    $.writeln("Cancel")
-  }
-
-  $.writeln("============ Text Layers =============")
-  for (var i = 0; i < selectedTextlayers.length; i++){
-    $.writeln(selectedTextlayers[i].name);
-  }
-
-  if (myComp != null){
-    var myFolder = findOrCreateFolder("MuVi2 Temp");
-    if ((myFolder != null) && (myFolder instanceof FolderItem)){
-      var myTempFootageFolder = findOrCreateFolder("Temp Footage")
-      if ((myTempFootageFolder != null) && (myTempFootageFolder instanceof FolderItem)){
-        myTempFootageFolder.parentFolder = myFolder
-        if (myComp instanceof CompItem){
-          var baseName = myComp.name
-          for (var i= 0; i < promoCount(myXML); i++){
-            if (selectedPromos[i]){
-              var newComp = myComp.duplicate();
-              newComp.parentFolder = myFolder;  
-              newComp.name = replacesSpacesWithUnderscores(baseName + "_" + promoCompName(promoData(myXML,i)));
-              var newTextLayers = textLayers(newComp)
-              for (var layer = 0; layer < newTextLayers.length; layer++){
-                for (var promoField = 0; promoField < selectedTextlayers.length; promoField++){
-                  if (newTextLayers[layer].name == selectedTextlayers[promoField].name){
-                    $.write(layer + ": ");
-                    $.writeln(newTextLayers[layer].name);
-                    $.writeln(textValue(newTextLayers[layer]))
-                    if (promoField == 0){
-                      setTextValue(newTextLayers[layer], promoData(myXML, i).title, hexColour[0]) //"FF0D3C")
-                    } else if (promoField == 1) {
-                      setTextValue(newTextLayers[layer], promoData(myXML, i).message, hexColour[1])
-                    } else if (promoField == 2){
-                      setTextValue(newTextLayers[layer], promoData(myXML, i).navigation, hexColour[2])
-                    }
-                  }
-                }
-              }
-              newComp.openInViewer()
-              newComp.time = 5;
-              saveFrame(newComp, 125, renderProfile.still);
-              renderMovie(newComp, renderProfile.movie);
-            }
-          }
-        }
-      }
-    }
-  }
+  processData()
 }
 
-app.endUndoGroup()
+function showCompWindow(){
+  var projectItems = compItems();
+  var compWindow = createCompSettingsWindow(projectItems);
+  compWindow.window.show() 
+}
 
 function getItems(){
   return app.project.items
