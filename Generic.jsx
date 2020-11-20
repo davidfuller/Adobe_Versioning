@@ -18,6 +18,8 @@ function fileNameWithoutExtension(theFile){
    * @property {DropDownList} dropdown
    * @property {StaticText} name
    * @property {Group} group
+   * @property {EditText} textColour
+   * @property {StaticText} validColour
    * /
 /**
  * 
@@ -25,10 +27,13 @@ function fileNameWithoutExtension(theFile){
  * @param {string} labelText 
  * @param {string} dropdownDefaultText 
  * @param {boolean} hasName
+ * @param {boolean} hasColour
+ * @param {string} defaultColourText
+ * @param {string} defaultColourStatus
  * @returns {dropdownDetail}
  */
 
-function addDropDown(parentGrp, labelText, dropdownDefaultText, hasName){
+function addDropDown(parentGrp, labelText, dropdownDefaultText, hasName, hasColour, defaultColourText, defaultColourStatus){
   var grp = parentGrp.add("group");
   grp.orientation = "row";
   grp.alignment = "left"
@@ -41,10 +46,17 @@ function addDropDown(parentGrp, labelText, dropdownDefaultText, hasName){
   dropdown.selection = 0;
   dropdown.size = [280, 22];
 
+  if (hasColour){
+    var textColour = grp.add("edittext", undefined, defaultColourText);
+    textColour.size = [100, 22]
+            
+    var validColour = grp.add("statictext", undefined, defaultColourStatus);
+    validColour.size = [10, 22]
+  }
   if (hasName){
     var nameStaticText = grp.add("statictext",undefined,"")
-    nameStaticText.size = [280,12];
+    nameStaticText.size = [280,22];
   }
   
-  return {dropdown: dropdown, name: nameStaticText, group: grp}
+  return {dropdown: dropdown, name: nameStaticText, group: grp, textColour: textColour, validColour: validColour}
 }
