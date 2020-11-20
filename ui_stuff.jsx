@@ -40,7 +40,7 @@ function createCompSettingsWindow(theComps){
   /**
    * @type {dropdownDetail}
    */
-  var tempDrop = addDropDown(mainCompGroup, "Comp", "Selected comp will appear here", false);
+  var tempDrop = addDropDown(mainCompGroup, "Comp", "Selected comp will appear here", false, false, "", "");
   var compDropdown = tempDrop.dropdown
   compDropdown.removeAll()
   for (var i = 0; i < theComps.length; i++){
@@ -52,11 +52,11 @@ function createCompSettingsWindow(theComps){
   mainMediaGroup.alignment = "left";
   mainMediaGroup.orientation = "column";
 
-  tempDrop = addDropDown(mainMediaGroup, "Promo Clip", "Footage and Comp Layers will appear here", true);
+  tempDrop = addDropDown(mainMediaGroup, "Promo Clip", "Footage and Comp Layers will appear here", true, false, "", "");
   var myClipDropDown = tempDrop.dropdown
   var clipName = tempDrop.name
 
-  var tempDrop = addDropDown(mainMediaGroup, "Audio", "Footage layers will appear here", true);
+  var tempDrop = addDropDown(mainMediaGroup, "Audio", "Footage layers will appear here", true, false, "", "");
   var myAudioDropDown = tempDrop.dropdown;
   var audioName = tempDrop.name;
 
@@ -64,18 +64,10 @@ function createCompSettingsWindow(theComps){
   rowThree.alignment = "left"
   rowThree.orientation = "column"
 
-  var posterGrp = rowThree.add("group");
-  posterGrp.alignment = "left";
-  posterGrp.orientation = "row";
-  var posterLabel = posterGrp.add("statictext", undefined, "Poster Frame (seconds)");
-  posterLabel.alignment = "left"
-  var posterFrame = posterGrp.add("edittext", undefined, "5.0")
-  posterFrame.size = [50, 16];
-  
   var endBoardPanel = rowThree.add("panel", undefined, "End Board", {borderStyle: "Etched"});
   endBoardPanel.alignment = "left"
 
-  var tempDrop = addDropDown(endBoardPanel, "Comp", "Comp layers will appear here", true);
+  var tempDrop = addDropDown(endBoardPanel, "Comp", "Comp layers will appear here", true, false, "", "");
   var endBoardCompDropdown = tempDrop.dropdown
   var endBoardName = tempDrop.name
     
@@ -86,84 +78,47 @@ function createCompSettingsWindow(theComps){
   var myTextColour = []
   var validColour = []
   var textFromLayer = []
-  var grp = []
-  var myLabel = []
   var myRenderDropDown = [];
-  var myRenderLabel = [];
-  var myBackgroundDropDown;
-  /**
-   * @type {DropDownList}
-   */
-  var myLogoDropDown;
-
-  var loopValue = numTextDropDowns;
-  if (numRenderTemplates > numTextDropDowns){
-    loopValue = numRenderTemplates;
-  }
-
-  for (var i = 0; i < loopValue; i++){
-    grp[i] = rowThree.add("group")
-    grp[i].orientation = "row"
-    grp[i].alignment = "left"
-
-    if (i < numTextDropDowns){
-      myLabel[i] = grp[i].add("statictext", undefined, textLayerNames[i]);
-      myLabel[i].size = [60,12];
   
-      myTextDropDown[i] = grp[i].add("dropdownlist",undefined,[])
-      myTextDropDown[i].add("item", "Text Layers will appear here")
-      myTextDropDown[i].selection = 0
-      myTextDropDown[i].size = [280,-1]
-
-      myTextColour[i] = grp[i].add("edittext", undefined, "Hex Colour");
-      myTextColour[i].size = [100, 16]
-            
-      validColour[i] = grp[i].add("statictext", undefined, "N");
-      validColour[i].size = [10, 16]
-
-      textFromLayer[i] = grp[i].add("statictext",undefined,"")
-      textFromLayer[i].size = [280, 10]
-    }
-    if (i < numRenderTemplates){
-      myRenderLabel[i] = grp[i].add("statictext", undefined, renderNames[i]);
-      myRenderLabel[i].size = [60,10];
-
-      myRenderDropDown[i] = grp[i].add("dropdownlist", undefined, []);
-      myRenderDropDown[i].add("item", "Render templates will appear here");
-      myRenderDropDown[i].selection = 0
-      myRenderDropDown[i].size = [280, -1]
+  for (var i = 0; i < numTextDropDowns; i++){
+    if (i < numTextDropDowns){
+      tempDrop = addDropDown(endBoardPanel, textLayerNames[i], "Text layers will appear here", true, true, "Hex Colour", "N");
+      myTextDropDown[i] = tempDrop.dropdown;
+      
+      myTextColour[i] = tempDrop.textColour;
+      validColour[i] = tempDrop.validColour
+      textFromLayer[i] = tempDrop.name
     }
   }
-  var mediaLabel = rowThree.add("statictext", undefined, "Media Layers")
+  var mediaLabel = endBoardPanel.add("statictext", undefined, "Media Layers")
   mediaLabel.alignment = "left"
   
+  tempDrop = addDropDown(endBoardPanel, "Background", "Comp layers will appear here", true, false, "", "");
+  var myBackgroundDropDown = tempDrop.dropdown
+  var backgroundName = tempDrop.name
+  
+  tempDrop = addDropDown(endBoardPanel, "Logo", "Comp layers will appear here", true, false, "", "");
+  var myLogoDropDown = tempDrop.dropdown
+  var logoName = tempDrop.name
 
-  var backgroundGroupNum = loopValue + 1;
-  grp[backgroundGroupNum] = rowThree.add("group")
-  grp[backgroundGroupNum].orientation = "row"
-  grp[backgroundGroupNum].alignment = "left"
-  myLabel[backgroundGroupNum] = grp[backgroundGroupNum].add("statictext", undefined, "Background");
-  myLabel[backgroundGroupNum].size = [60,12];
-  myBackgroundDropDown = grp[backgroundGroupNum].add("dropdownlist",undefined,[])
-  myBackgroundDropDown.add("item", "Comp Layers will appear here")
-  myBackgroundDropDown.selection = 0
-  myBackgroundDropDown.size = [280,-1]
-  var backgroundName = grp[backgroundGroupNum].add("statictext",undefined,"")
-  backgroundName.size = [280,12]
+  var renderPanel = rowThree.add("panel", undefined, "Render", {borderStyle: "Etched"});
+  renderPanel.alignment = "left"
 
-  var logoGroupNum = backgroundGroupNum + 1;
-  grp[logoGroupNum] = rowThree.add("group")
-  grp[logoGroupNum].orientation = "row"
-  grp[logoGroupNum].alignment = "left"
-  myLabel[logoGroupNum] = grp[logoGroupNum].add("statictext", undefined, "Logo");
-  myLabel[logoGroupNum].size = [60,12];
-  myLogoDropDown = grp[logoGroupNum].add("dropdownlist",undefined,[])
-  myLogoDropDown.add("item", "Comp Layers will appear here")
-  myLogoDropDown.selection = 0
-  myLogoDropDown.size = [280,-1]
-  var logoName = grp[logoGroupNum].add("statictext",undefined,"")
-  logoName.size = [280,12]
-
+  var posterGrp = renderPanel.add("group");
+  posterGrp.alignment = "left";
+  posterGrp.orientation = "row";
+  var posterLabel = posterGrp.add("statictext", undefined, "Poster Frame (seconds)");
+  posterLabel.alignment = "left"
+  var posterFrame = posterGrp.add("edittext", undefined, "5.0")
+  posterFrame.size = [50, 22];
+  
+  for (var i = 0; i < numRenderTemplates; i++){
+    if (i < numRenderTemplates){
+      tempDrop = addDropDown(renderPanel, renderNames[i], "Render templates will appear here", false, false, "", "");
+      myRenderDropDown[i] = tempDrop.dropdown
+    }
+  }
+  
   setActive.onClick = function(){
     if (app.project.activeItem != null){
       compDropdown.selection = compDropdown.find(app.project.activeItem.name)
@@ -172,18 +127,12 @@ function createCompSettingsWindow(theComps){
   
   compDropdown.onChange = function(){
     selectCompIndex = selectedComp(compDropdown)
-    var myTextLayers = textLayers(theComps[selectCompIndex])
+    
     var myFootageAndCompLayers = footageAndCompLayers(theComps[selectCompIndex])
     var myFootageLayers = footageLayers(theComps[selectCompIndex])
     var myCompLayers = compLayers(theComps[selectCompIndex])
     $.writeln("Change: " + compDropdown.selection.toString())
     
-    for (var i = 0; i < numTextDropDowns; i++){
-      myTextDropDown[i].removeAll();
-      for (var j = 0; j < myTextLayers.length; j++){
-        myTextDropDown[i].add("item", myTextLayers[j].name)
-      }
-    }
     var renderTemplates = availableRenderTemplates(theComps[selectedComp(compDropdown)]);
     for (var i = 0; i < numRenderTemplates; i++){
       myRenderDropDown[i].removeAll();
@@ -195,14 +144,7 @@ function createCompSettingsWindow(theComps){
     for (var j = 0; j < myFootageAndCompLayers.length; j++){
       myClipDropDown.add("item", footageDisplay(myFootageAndCompLayers[j]));
     }
-    myBackgroundDropDown.removeAll();
-    for (var j = 0; j < myCompLayers.length; j++){
-      myBackgroundDropDown.add("item", myCompLayers[j].name);
-    }
-    myLogoDropDown.removeAll();
-    for (var j = 0; j < myCompLayers.length; j++){
-      myLogoDropDown.add("item", myCompLayers[j].name);
-    }
+    
     myAudioDropDown.removeAll();
     for (var j = 0; j < myFootageLayers.length; j++){
       myAudioDropDown.add("item", myFootageLayers[j].name);
@@ -215,6 +157,25 @@ function createCompSettingsWindow(theComps){
   endBoardCompDropdown.onChange = function(){
     if (endBoardCompDropdown.selection != null){
       endBoardName.text = selectedCompLayer(theComps[selectCompIndex], endBoardCompDropdown).source.name; 
+      var endBoardComp = compFromName(endBoardCompDropdown.selection.toString())
+      if (endBoardComp != null){
+        var myTextLayers = textLayers(endBoardComp);
+        var myCompLayers = compLayers(endBoardComp);
+        for (var i = 0; i < numTextDropDowns; i++){
+          myTextDropDown[i].removeAll();
+          for (var j = 0; j < myTextLayers.length; j++){
+            myTextDropDown[i].add("item", myTextLayers[j].name)
+          }
+        }
+        myBackgroundDropDown.removeAll();
+        for (var j = 0; j < myCompLayers.length; j++){
+          myBackgroundDropDown.add("item", myCompLayers[j].name);
+        }
+        myLogoDropDown.removeAll();
+        for (var j = 0; j < myCompLayers.length; j++){
+          myLogoDropDown.add("item", myCompLayers[j].name);
+        }
+      }
     }
   }
   
@@ -247,12 +208,18 @@ function createCompSettingsWindow(theComps){
 
   myBackgroundDropDown.onChange = function(){
     if (myBackgroundDropDown.selection != null){
-      backgroundName.text = selectedCompLayer(theComps[selectCompIndex], myBackgroundDropDown).source.name; 
+      var endBoardComp = compFromName(endBoardCompDropdown.selection.toString())
+      if (endBoardComp != null){
+        backgroundName.text = selectedCompLayer(endBoardComp, myBackgroundDropDown).source.name; 
+      }
     }
   }
   myLogoDropDown.onChange = function(){
     if (myLogoDropDown.selection != null){
-      logoName.text = selectedCompLayer(theComps[selectCompIndex], myLogoDropDown).source.name; 
+      var endBoardComp = compFromName(endBoardCompDropdown.selection.toString())
+      if (endBoardComp != null){
+        logoName.text = selectedCompLayer(endBoardComp, myLogoDropDown).source.name; 
+      }
     }
   }
   myAudioDropDown.onChange = function(){
@@ -271,15 +238,18 @@ function createCompSettingsWindow(theComps){
   }
   
   function textDropDownChange(index){
-    var myTextLayers = textLayers(theComps[selectedComp(compDropdown)])
-    $.writeln("Text Change No:" + index)
-    if (myTextDropDown[index].selection != null){
-      var selectedLayer = Number(myTextDropDown[index].selection.valueOf())
-      var theTextLayer = myTextLayers[selectedLayer]
-      if (theTextLayer instanceof TextLayer){
-        textFromLayer[index].text = theTextLayer.sourceText.value.text
-      } else {
-        textFromLayer[index].text = ""
+    var endBoardComp = compFromName(endBoardCompDropdown.selection.toString())
+    if (endBoardComp != null){
+      var myTextLayers = textLayers(endBoardComp);
+      $.writeln("Text Change No:" + index)
+      if (myTextDropDown[index].selection != null){
+        var selectedLayer = Number(myTextDropDown[index].selection.valueOf())
+        var theTextLayer = myTextLayers[selectedLayer]
+        if (theTextLayer instanceof TextLayer){
+          textFromLayer[index].text = theTextLayer.sourceText.value.text
+        } else {
+          textFromLayer[index].text = ""
+        }
       }
     }
   }
