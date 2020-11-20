@@ -8,6 +8,26 @@ function columnNames(theXML){
   return columnArray
 }
 
+/**
+ * 
+ * @typedef {Object} PromoData
+ * @property {string} title
+ * @property {string} message
+ * @property {string} navigation
+ * @property {string} fullFile
+ * @property {string} displayFile
+ * @property {string} backgroundName
+ * @property {string} logoName
+ * @property {string} profile
+ * @property {string} audioFile
+ */
+/**
+ * 
+ * @param {Object} theXML 
+ * @param {number} itemNo 
+ * @returns {PromoData}
+ */
+
 function promoData(theXML, itemNo){
   var theData = myXML.elements()[0].elements()[itemNo]
   var tempItem = { title: theData.elements()[0],
@@ -17,7 +37,8 @@ function promoData(theXML, itemNo){
                     displayFile: displayName(theData.elements()[3]),
                     backgroundName: theData.elements()[4],
                     logoName: theData.elements()[5],
-                    profile: theData.elements()[6]}
+                    profile: theData.elements()[6],
+                    audioFile: theData.elements()[7]}
   return tempItem
 }
 
@@ -73,10 +94,19 @@ function loadSettings(profileName){
 function promoCount(theXML){
   return theXML.elements()[0].elements().length()
 }
-
-function promoCompName(pData){
-  return replacesSpacesWithUnderscores(pData.title.toUpperCase() + "_" + pData.message.toUpperCase() + "_" +  pData.navigation.toUpperCase());
+/**
+ * 
+ * @param {PromoData} pData 
+ * @param {boolean} withProfile
+ */
+function promoCompName(pData, withProfile){
+  var temp = "";
+  if (withProfile){
+    temp = fileNameWithoutExtension(new File(pData.profile)).toUpperCase() + "_";
+  }
+  temp = temp + pData.title.toUpperCase() + "_" + pData.message.toUpperCase() + "_" +  pData.navigation.toUpperCase();
+  return replacesSpacesWithUnderscores(temp);
 }
 function replacesSpacesWithUnderscores(theText){
-  return theText.replace(/\s/g, "_").replace(/__/g, "_");
+  return theText.replace(/\s/g, "_").replace(/__/g, "_").replace(/\./g,"");
 }
