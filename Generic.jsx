@@ -12,16 +12,23 @@ function fileNameWithoutExtension(theFile){
   return theName;
 }
 
+
+/**
+   * @typedef {object} dropdownDetail 
+   * @property {DropDownList} dropdown
+   * @property {StaticText} name
+   * @property {Group} group
+   * /
 /**
  * 
  * @param {Group} parentGrp 
  * @param {string} labelText 
  * @param {string} dropdownDefaultText 
- * @param {StaticText} nameStaticText
- * @returns {DropDownList}
+ * @param {boolean} hasName
+ * @returns {dropdownDetail}
  */
 
-function addDropDown(parentGrp, labelText, dropdownDefaultText, nameStaticText){
+function addDropDown(parentGrp, labelText, dropdownDefaultText, hasName){
   var grp = parentGrp.add("group");
   grp.orientation = "row";
   grp.alignment = "left"
@@ -34,9 +41,10 @@ function addDropDown(parentGrp, labelText, dropdownDefaultText, nameStaticText){
   dropdown.selection = 0;
   dropdown.size = [280, 22];
 
-  nameStaticText = grp.add("statictext",undefined,"")
-  nameStaticText.size = [280,12]
-
-
-  return dropdown
+  if (hasName){
+    var nameStaticText = grp.add("statictext",undefined,"")
+    nameStaticText.size = [280,12];
+  }
+  
+  return {dropdown: dropdown, name: nameStaticText, group: grp}
 }
