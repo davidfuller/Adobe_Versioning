@@ -26,6 +26,8 @@ function saveSettingsJson(settingsObject, profileName){
    * @property {string} clipLayer
    * @property {string} backgroundLayer
    * @property {string} logoLayer
+   * @property {string} posterFrame
+   * @property {string} audioFile
    * /
   
    /**
