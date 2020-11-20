@@ -47,7 +47,7 @@ function textLayers(comp){
  * @param {CompItem} comp 
  * @returns {Array<FootageObject>}
  */
-function footageLayers(comp){
+function footageAndCompLayers(comp){
   var footage = []
   if (comp instanceof CompItem){
     var myLayers = comp.layers
@@ -63,6 +63,28 @@ function footageLayers(comp){
           if (testLayer.source instanceof CompItem){
             var temp = {layer: testLayer, type: "COMP"}
             footage.push(temp)
+          }
+        }
+      }
+    }
+  }
+  return footage
+}
+/**
+ * 
+ * @param {CompItem} comp 
+ * @returns {Array<AVLayer>}
+ */
+function footageLayers(comp){
+  var footage = []
+  if (comp instanceof CompItem){
+    var myLayers = comp.layers
+    for (var i = 1; i <= myLayers.length; i++){
+      var testLayer = myLayers[i]
+      if (testLayer instanceof AVLayer){
+        if (testLayer.source instanceof FootageItem){
+          if (testLayer.source.mainSource instanceof FileSource){
+            footage.push(testLayer)
           }
         }
       }
@@ -104,7 +126,7 @@ function footageFile(myFootage){
   if (myFootage.type == "FOOT"){
     return myFootage.layer.source.mainSource.file;
   } else {
-    var theLayers = footageLayers(myFootage.layer.source);
+    var theLayers = footageAndCompLayers(myFootage.layer.source);
     if (theLayers.length > 0){
       var found = false;
       for (var i = 0; i < theLayers.length; i++){
@@ -247,7 +269,7 @@ function processData(){
       var baseName = myComp.name
       var newComp = myComp.duplicate();
       newComp.parentFolder = myFolder;  
-      newComp.name = replacesSpacesWithUnderscores(baseName + "_" + promoCompName(promoData(myXML,i)));
+      newComp.name = replacesSpacesWithUnderscores(promoCompName(promoData(myXML,i), true));
       var newTextLayers = textLayers(newComp)
       for (var textLayer = 0; textLayer < textLayerNames.length; textLayer++){
         var thisTextLayer = getTextLayer(textLayerNames[textLayer],profile)
@@ -261,13 +283,13 @@ function processData(){
       var bgCompName = promoData(myXML, i).backgroundName;
       var logoCompName = promoData(myXML, i).logoName;
       doBackgroundAndLogo(myComp, newComp, profile, bgCompName, logoCompName);
+      doTheAudioClip(i, myTempFootageFolder, myComp, newComp, profile);
       newComp.openInViewer()
-      newComp.time = 5;
+      newComp.time = Number(profile.posterFrame);
 
       var renderProfile = getRenderProfile(profile)
-      saveFrame(newComp, 125, renderProfile.still);
-      renderMovie(newComp, renderProfile.clip);
-
+      saveFrame(newComp, Number(profile.posterFrame) * newComp.frameRate, renderProfile.still);
+      renderMovie(newComp, renderProfile.clip); 
     }
   }
 }
@@ -280,20 +302,21 @@ function processData(){
  * @param {profile} profile
  */
 function doThePromoClip(promoNum, tempFolder, originalComp, newComp, profile){
-  var impOpts = new ImportOptions(promoData(myXML, promoNum).fullFile);
+  var myFile = new File(promoData(myXML, promoNum).fullFile)
+  var impOpts = new ImportOptions(myFile);
   if (impOpts.canImportAs(ImportAsType.FOOTAGE)){
     impOpts.importAs = ImportAsType.FOOTAGE;
     var newFootage = app.project.importFile(impOpts);
     newFootage.parentFolder = tempFolder;
   }
-  var footageObj = getFootageLayer(originalComp, profile);
+  var footageObj = getFootageAndCompLayer(originalComp, profile);
   if (footageObj.type == "COMP"){
     var footageComp = footageObj.layer.source;
     var newFootageComp =footageComp.duplicate();
     newFootageComp.parentFolder = tempFolder;
     newFootageComp.name = fileNameWithoutExtension(impOpts.file)
 
-    var newCompFootageLayers = footageLayers(newComp)
+    var newCompFootageLayers = footageAndCompLayers(newComp)
     for (var j = 0; j < newCompFootageLayers.length; j++){
       if (newCompFootageLayers[j].type == "COMP"){
         if (newCompFootageLayers[j].layer.source.name == footageObj.layer.source.name){
@@ -301,7 +324,7 @@ function doThePromoClip(promoNum, tempFolder, originalComp, newComp, profile){
         }
       }
     }
-    var newFootageLayers = footageLayers(newFootageComp)
+    var newFootageLayers = footageAndCompLayers(newFootageComp)
     for (var j = 0; j < newFootageLayers.length; j++){
       if (newFootageLayers[j].type == "FOOT"){
         if (newFootage instanceof FootageItem){
@@ -346,4 +369,27 @@ function doBackgroundAndLogo(originalComp, newComp, profile, backgroundName, log
       newLayers[j].replaceSource(newLogoComp, false)
     }
   }
+}
+/**
+ * 
+ * @param {number} promoNum 
+ * @param {FolderItem} tempFolder 
+ * @param {CompItem} originalComp
+ * @param {CompItem} newComp
+ * @param {profile} profile
+ */
+function doTheAudioClip(promoNum, tempFolder, originalComp, newComp, profile){
+  var myFile = new File(promoData(myXML, promoNum).audioFile);
+  var impOpts = new ImportOptions(myFile);
+  if (impOpts.canImportAs(ImportAsType.FOOTAGE)){
+    impOpts.importAs = ImportAsType.FOOTAGE;
+    var newFootage = app.project.importFile(impOpts);
+    newFootage.parentFolder = tempFolder;
+
+    var footageLayer = getFootageLayer(newComp, profile);
+    if (newFootage instanceof FootageItem){
+      footageLayer.replaceSource(newFootage, false);
+    }
+  }
+  
 }
