@@ -36,10 +36,25 @@ function getHexColour(layerName, profile){
  * @param {profile} profile 
 * @returns {FootageObject}
  */
+function getFootageAndCompLayer(theComp, profile){
+  var layers = footageAndCompLayers(theComp);
+  for (i = 0; i < layers.length; i++){
+    if (footageDisplay(layers[i]) == profile.clipLayer){
+      return layers[i]
+    }
+  }
+  return null;
+}
+/**
+ * 
+ * @param {CompItem} theComp 
+ * @param {profile} profile 
+*  @returns {AVLayer}
+ */
 function getFootageLayer(theComp, profile){
   var layers = footageLayers(theComp);
   for (i = 0; i < layers.length; i++){
-    if (footageDisplay(layers[i]) == profile.clipLayer){
+    if (layers[i].name == profile.audioFile){
       return layers[i]
     }
   }
