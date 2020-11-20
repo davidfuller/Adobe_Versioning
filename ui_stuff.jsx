@@ -39,6 +39,12 @@ function createCompSettingsWindow(theComps){
   rowThree.alignment = "left"
   rowThree.orientation = "column"
 
+  /**
+   * @type {StaticText}
+   */
+  var audioName 
+  var myAudioDropDown = addDropDown(rowThree, "Audio", "Footage layers will appear here", audioName);
+
   var posterGrp = rowThree.add("group");
   posterGrp.alignment = "left";
   posterGrp.orientation = "row";
@@ -47,22 +53,15 @@ function createCompSettingsWindow(theComps){
   var posterFrame = posterGrp.add("edittext", undefined, "5.0")
   posterFrame.size = [50, 16];
   
-
   var endBoardLabel = rowThree.add("statictext", undefined, "End Board")
   endBoardLabel.alignment = "left"
-    
-  var endBoardCompGrp = rowThree.add("group");
-  endBoardCompGrp.orientation = "row";
-  endBoardCompGrp.alignment = "left"
-  
-  var endBoardCompLabel = endBoardCompGrp.add("statictext", undefined, "Comp")
-  endBoardCompLabel.size = [60,12];
 
-  var endBoardCompDropdown = endBoardCompGrp.add("dropdownlist", undefined, []);
-  endBoardCompDropdown.add("item", "Comp Layers will appear here");
-  endBoardCompDropdown.selection = 0;
-  endBoardCompDropdown.size = [280, 22];
-  
+  /**
+   * @type {StaticText}
+   */
+  var endBoardName
+  var endBoardCompDropdown = addDropDown(rowThree, "Comp", "Comp layers will appear here", endBoardName)
+    
   var textLabel = rowThree.add("statictext", undefined, "Text Layers")
   textLabel.alignment = "left"
   
@@ -159,19 +158,6 @@ function createCompSettingsWindow(theComps){
   myLogoDropDown.size = [280,-1]
   var logoName = grp[logoGroupNum].add("statictext",undefined,"")
   logoName.size = [280,12]
-
-  var audioGroupNum = logoGroupNum + 1;
-  grp[audioGroupNum] = rowThree.add("group")
-  grp[audioGroupNum].orientation = "row"
-  grp[audioGroupNum].alignment = "left"
-  myLabel[audioGroupNum] = grp[audioGroupNum].add("statictext", undefined, "Audio");
-  myLabel[audioGroupNum].size = [60,12];
-  var myAudioDropDown = grp[audioGroupNum].add("dropdownlist",undefined,[])
-  myAudioDropDown.add("item", "Footage Layers will appear here")
-  myAudioDropDown.selection = 0
-  myAudioDropDown.size = [280,-1]
-  var audioName = grp[audioGroupNum].add("statictext",undefined,"")
-  audioName.size = [280,12]
 
   setActive.onClick = function(){
     if (app.project.activeItem != null){
