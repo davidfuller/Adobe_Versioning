@@ -29,21 +29,40 @@ function createCompSettingsWindow(theComps){
   
   var rowTwo = myWindow.add("group")
   rowTwo.alignment = "left"
-  var compDropdown = rowTwo.add("dropdownlist", undefined,[])
+  var mainPanel = rowTwo.add("panel", undefined, "Main Composition", {borderStyle: "etched"});
+  mainPanel.alignment = "left"
+  mainPanel.orientation = "column"
+
+  var mainCompGroup = mainPanel.add("group");
+  mainCompGroup.alignment = "left";
+  mainCompGroup.orientation = "row"
+
+  /**
+   * @type {dropdownDetail}
+   */
+  var tempDrop = addDropDown(mainCompGroup, "Comp", "Selected comp will appear here", false);
+  var compDropdown = tempDrop.dropdown
+  compDropdown.removeAll()
   for (var i = 0; i < theComps.length; i++){
     compDropdown.add("item", theComps[i].name)
   }
-  var setActive = rowTwo.add("button", undefined, "Select Active Comp")
+  var setActive = tempDrop.group.add("button", undefined, "Select Active Comp")
+
+  var mainMediaGroup = mainPanel.add("group");
+  mainMediaGroup.alignment = "left";
+  mainMediaGroup.orientation = "column";
+
+  tempDrop = addDropDown(mainMediaGroup, "Promo Clip", "Footage and Comp Layers will appear here", true);
+  var myClipDropDown = tempDrop.dropdown
+  var clipName = tempDrop.name
+
+  var tempDrop = addDropDown(mainMediaGroup, "Audio", "Footage layers will appear here", true);
+  var myAudioDropDown = tempDrop.dropdown;
+  var audioName = tempDrop.name;
 
   var rowThree = myWindow.add("group")
   rowThree.alignment = "left"
   rowThree.orientation = "column"
-
-  /**
-   * @type {StaticText}
-   */
-  var audioName 
-  var myAudioDropDown = addDropDown(rowThree, "Audio", "Footage layers will appear here", audioName);
 
   var posterGrp = rowThree.add("group");
   posterGrp.alignment = "left";
@@ -53,16 +72,14 @@ function createCompSettingsWindow(theComps){
   var posterFrame = posterGrp.add("edittext", undefined, "5.0")
   posterFrame.size = [50, 16];
   
-  var endBoardLabel = rowThree.add("statictext", undefined, "End Board")
-  endBoardLabel.alignment = "left"
+  var endBoardPanel = rowThree.add("panel", undefined, "End Board", {borderStyle: "Etched"});
+  endBoardPanel.alignment = "left"
 
-  /**
-   * @type {StaticText}
-   */
-  var endBoardName
-  var endBoardCompDropdown = addDropDown(rowThree, "Comp", "Comp layers will appear here", endBoardName)
+  var tempDrop = addDropDown(endBoardPanel, "Comp", "Comp layers will appear here", true);
+  var endBoardCompDropdown = tempDrop.dropdown
+  var endBoardName = tempDrop.name
     
-  var textLabel = rowThree.add("statictext", undefined, "Text Layers")
+  var textLabel = endBoardPanel.add("statictext", undefined, "Text Layers")
   textLabel.alignment = "left"
   
   var myTextDropDown = []
@@ -73,7 +90,6 @@ function createCompSettingsWindow(theComps){
   var myLabel = []
   var myRenderDropDown = [];
   var myRenderLabel = [];
-  var myClipDropDown;
   var myBackgroundDropDown;
   /**
    * @type {DropDownList}
@@ -120,20 +136,9 @@ function createCompSettingsWindow(theComps){
   }
   var mediaLabel = rowThree.add("statictext", undefined, "Media Layers")
   mediaLabel.alignment = "left"
-  var clipGroupNum = loopValue + 1
-  grp[clipGroupNum] = rowThree.add("group")
-  grp[clipGroupNum].orientation = "row"
-  grp[clipGroupNum].alignment = "left"
-  myLabel[clipGroupNum] = grp[clipGroupNum].add("statictext", undefined, "Clip");
-  myLabel[clipGroupNum].size = [60,12];
-  myClipDropDown = grp[clipGroupNum].add("dropdownlist",undefined,[])
-  myClipDropDown.add("item", "Footage and Comp Layers will appear here")
-  myClipDropDown.selection = 0
-  myClipDropDown.size = [280,-1]
-  var clipName = grp[clipGroupNum].add("statictext",undefined,"")
-  clipName.size = [280,12]
+  
 
-  var backgroundGroupNum = clipGroupNum + 1;
+  var backgroundGroupNum = loopValue + 1;
   grp[backgroundGroupNum] = rowThree.add("group")
   grp[backgroundGroupNum].orientation = "row"
   grp[backgroundGroupNum].alignment = "left"
@@ -205,6 +210,11 @@ function createCompSettingsWindow(theComps){
     endBoardCompDropdown.removeAll();
     for (var j = 0; j < myCompLayers.length; j++){
       endBoardCompDropdown.add("item", myCompLayers[j].name);
+    }
+  }
+  endBoardCompDropdown.onChange = function(){
+    if (endBoardCompDropdown.selection != null){
+      endBoardName.text = selectedCompLayer(theComps[selectCompIndex], endBoardCompDropdown).source.name; 
     }
   }
   
