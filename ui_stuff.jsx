@@ -127,8 +127,6 @@ function createCompSettingsWindow(theComps){
     var myFootageAndCompLayers = footageAndCompLayers(globalMainComp)
     var myFootageLayers = footageLayers(globalMainComp)
     var myCompLayers = compLayers(globalMainComp)
-    $.writeln("Change: " + compDropdown.selection.toString())
-    
     var renderTemplates = availableRenderTemplates(globalMainComp);
     for (var i = 0; i < numRenderTemplates; i++){
       myRenderDropDown[i].removeAll();
@@ -252,48 +250,47 @@ function createCompSettingsWindow(theComps){
   rowFive.alignment = "right"
 
   saveProfileButton.onClick = function(){
-    var mySelection = Number(compDropdown.selection.valueOf())
-    var compName = theComps[mySelection].name
-    var allTextLayers = textLayers(theComps[mySelection]);
-    var profile = {
-      composition: compName
-    }
-    profile.textLayers = [];
-    profile.hexColours = [];
-    profile.renderTemplates = [];
-    for(var i = 0; i < numTextDropDowns; i++){
-      var textLayer = allTextLayers[Number(myTextDropDown[i].selection.valueOf())].name;
-      var textObj = {};
-      textObj[textLayerNames[i]] = textLayer;
-      profile.textLayers.push(textObj);
-      var hexColour = myTextColour[i].text
-      var hexObj = {};
-      hexObj[textLayerNames[i]] = hexColour;
-      profile.hexColours.push(hexObj);
-    }
-    
-    for (var i = 0; i < numRenderTemplates; i++){
-      var render = myRenderDropDown[i].selection.toString()
-      var renderObj = {}
-      renderObj[renderNames[i]] = render
-      profile.renderTemplates.push(renderObj)
-    }
+    if (globalMainComp != null && globalEndBoardComp != null){
+      var profile = {
+        composition: globalMainComp.name
+      }
+      profile.endBoardComp = globalEndBoardComp.name;
+      var allTextLayers = textLayers(globalEndBoardComp);
+      profile.textLayers = [];
+      profile.hexColours = [];
+      profile.renderTemplates = [];
+      for(var i = 0; i < numTextDropDowns; i++){
+        var textLayer = allTextLayers[myTextDropDown[i].selection.index].name;
+        var textObj = {};
+        textObj[textLayerNames[i]] = textLayer;
+        profile.textLayers.push(textObj);
+        var hexColour = myTextColour[i].text
+        var hexObj = {};
+        hexObj[textLayerNames[i]] = hexColour;
+        profile.hexColours.push(hexObj);
+      }
+      
+      for (var i = 0; i < numRenderTemplates; i++){
+        var render = myRenderDropDown[i].selection.text
+        var renderObj = {}
+        renderObj[renderNames[i]] = render
+        profile.renderTemplates.push(renderObj)
+      }
 
-    profile.clipLayer = myClipDropDown.selection.toString();
-    profile.backgroundLayer = myBackgroundDropDown.selection.toString();
-    profile.logoLayer = myLogoDropDown.selection.toString();
-    profile.posterFrame = posterFrame.text
-    profile.audioFile = myAudioDropDown.selection.toString();
+      profile.clipLayer = myClipDropDown.selection.toString();
+      profile.backgroundLayer = myBackgroundDropDown.selection.toString();
+      profile.logoLayer = myLogoDropDown.selection.toString();
+      profile.posterFrame = posterFrame.text
+      profile.audioFile = myAudioDropDown.selection.toString();
 
-    var profileFileName = getProfileSaveFilename()
-    if (profileFileName != null){
-      saveSettingsJson(profile, profileFileName.name)
-    } else {
-      saveSettingsJson(profile, compProfileFileName)
+      var profileFileName = getProfileSaveFilename()
+      if (profileFileName != null){
+        saveSettingsJson(profile, profileFileName.name)
+      } else {
+        saveSettingsJson(profile, compProfileFileName)
+      }
     }
-    
   }
-
   loadProfileButton.onClick = function(){
     var profileFileName = getProfileLoadName()
     var profile
@@ -304,6 +301,7 @@ function createCompSettingsWindow(theComps){
     }
     
     compDropdown.selection = compDropdown.find(profile.composition);
+    endBoardCompDropdown.selection = endBoardCompDropdown.find(profile.endBoardComp);
     for (var i = 0; i < numTextDropDowns; i++){
       myTextDropDown[i].selection = myTextDropDown[i].find(profile.textLayers[i][textLayerNames[i]])
       myTextColour[i].text = profile.hexColours[i][textLayerNames[i]]
