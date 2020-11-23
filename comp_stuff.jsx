@@ -23,14 +23,18 @@ function compItems(folderName){
 /**
  * 
  * @param {CompItem} comp 
+ * @returns {Array<Layer>}
  */
 function textLayers(comp){
+  /**
+   * @type {Array<Layer>}
+   */
   var text = []
   if (comp instanceof CompItem){
     var myLayers = comp.layers
     for (var i = 1; i <= myLayers.length; i++){
       if (myLayers[i] instanceof TextLayer){
-        text.push(myLayers[i])
+        text.push(myLayers[i]);
       }
     }
   }
@@ -155,7 +159,11 @@ function footageDisplay(footageObj){
   }
 }
 
-
+/**
+ * 
+ * @param {CompItem} comp
+ * @returns {Array<string>} 
+ */
 function availableRenderTemplates(comp){
   var templates = [];
   if (comp instanceof CompItem){
@@ -163,6 +171,7 @@ function availableRenderTemplates(comp){
     var outputModule = renderItem.outputModule(1);
     templates = outputModule.templates
     renderItem.remove();
+    comp.openInViewer();
   }
   return templates
 }
@@ -188,17 +197,7 @@ function findOrCreateFolder(folderName){
   }
   return myFolder
 }
-/**
- * 
- * @param {*} compWindow 
- * @param {*} projectItems 
- */
 
-function compFromDropDown(compWindow, projectItems){
-  var mySelection = compWindow.compDropdown.selection.index
-  
-  return projectItems[mySelection]
-}
 function hexToRGBArray(hex){
   var rgb = parseInt(hex, 16); 
   var red;
