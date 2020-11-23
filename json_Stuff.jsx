@@ -20,6 +20,7 @@ function saveSettingsJson(settingsObject, profileName){
   /**
    * @typedef {object} profile 
    * @property {string} composition
+   * @property {string} endBoardComp
    * @property {Array} textLayers
    * @property {Array} hexColours
    * @property {Array} renderTemplates
