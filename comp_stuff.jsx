@@ -255,6 +255,18 @@ function compFromName(compName){
   }
   return null;
 }
+/**
+ * 
+ * @param {DropDownList} drop 
+ * @returns {CompItem}
+ */
+function compFromDropDown(drop){
+  if (drop.selection != null){
+    return compFromName(drop.selection.toString())
+  } else {
+    return null
+  }
+}
 
 function processData(){
   

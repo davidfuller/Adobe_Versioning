@@ -14,6 +14,14 @@ var defaultXMLFolder = getXMLFolder()
 var myXML
 var doIt
 var hexColour = [];
+/**
+ * @type {CompItem}
+ */
+var globalMainComp
+/**
+ * @type {CompItem}
+ */
+var globalEndBoardComp
 
 var fileWindow = getXMLFile();
 if (fileWindow.show() == 1){
