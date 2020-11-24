@@ -93,7 +93,22 @@ function timecodeToSeconds(timecodeString, frameRate){
   } else {
     return null;
   }
-
-
 }
-
+/**
+ * 
+ * @param {string} outputFolder 
+ * @param {string} archiveSubFolder 
+ * @param {string} fileName 
+ */
+function archiveFile(outputFolder, archiveSubFolder, fileName){
+  var tempFile = new File(outputFolder + fileName);
+  if (tempFile.exists){
+    var archiveFile = new File(outputFolder + archiveSubFolder + fileName);
+    var loop = 0;
+    while (archiveFile.exists){
+      loop = loop + 1;
+      archiveFile = new File(fileNameWithoutExtension(archiveFile) + "_" + loop + getExtension(archiveFile.name))
+    }
+    tempFile.rename(archiveFile.fullName)
+  }
+}
