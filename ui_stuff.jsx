@@ -372,8 +372,8 @@ function displayPromos(){
 
   var grp1 = outerGrp.add("group")
   var promoList = grp1.add("listbox", undefined, [], 
-                              {numberOfColumns: 5, showHeaders: true, 
-                               columnTitles: ["Title", "Message", "Navigation", "Promo File", "Comp Name"],
+                              {numberOfColumns: 10, showHeaders: true, 
+                               columnTitles: ["Title", "Message", "Navigation", "Promo File", "Background Comp", "Logo Comp", "Profile", "Audio File", "End Board Timecode", "Comp Name"],
                                multiselect: true});
   var pData = null;
   for (var i = 0; i < promoCount(myXML); i++){
@@ -382,7 +382,12 @@ function displayPromos(){
     tempItem.subItems[0].text = pData.message
     tempItem.subItems[1].text = pData.navigation
     tempItem.subItems[2].text = pData.displayFile
-    tempItem.subItems[3].text = promoCompName(pData, false);
+    tempItem.subItems[3].text = pData.backgroundName
+    tempItem.subItems[4].text = pData.logoName
+    tempItem.subItems[5].text = pData.profile
+    tempItem.subItems[6].text = pData.displayAudio
+    tempItem.subItems[7].text = pData.endBoardTimecode
+    tempItem.subItems[8].text = promoCompName(pData, false);
     tempItem.selected = true;
   }
   
