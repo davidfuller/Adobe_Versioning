@@ -277,11 +277,14 @@ function processData(){
       var promo = promoData(myXML,i);
       var profile = loadProfileFromPromoData(promo);
       var myComp = compFromName(profile.composition);
-      var baseName = myComp.name
       var newComp = myComp.duplicate();
       newComp.parentFolder = myFolder;  
       newComp.name = replacesSpacesWithUnderscores(promoCompName(promoData(myXML,i), true));
-      var newTextLayers = textLayers(newComp)
+      var myEndBoardComp = compFromName(profile.endBoardComp);
+      var newEndBoardComp = myEndBoardComp.duplicate();
+      newEndBoardComp.parentFolder = myFolder
+      newEndBoardComp.name = newComp.name + "_End_Board"
+      var newTextLayers = textLayers(newEndBoardComp)
       for (var textLayer = 0; textLayer < textLayerNames.length; textLayer++){
         var thisTextLayer = getTextLayer(textLayerNames[textLayer],profile)
         for (var layer = 0; layer < newTextLayers.length; layer++){
@@ -290,10 +293,10 @@ function processData(){
           }
         }
       }
-      doThePromoClip(i, myTempFootageFolder, myComp, newComp, profile);
+      doThePromoClip(i, myTempFootageFolder, myComp, newComp, myEndBoardComp, newEndBoardComp, profile);
       var bgCompName = promoData(myXML, i).backgroundName;
       var logoCompName = promoData(myXML, i).logoName;
-      doBackgroundAndLogo(myComp, newComp, profile, bgCompName, logoCompName);
+      doBackgroundAndLogo(myEndBoardComp, newEndBoardComp, profile, bgCompName, logoCompName);
       doTheAudioClip(i, myTempFootageFolder, myComp, newComp, profile);
       newComp.openInViewer()
       newComp.time = Number(profile.posterFrame);
@@ -310,9 +313,11 @@ function processData(){
  * @param {FolderItem} tempFolder 
  * @param {CompItem} originalComp
  * @param {CompItem} newComp
+ * @param {CompItem} originalEndBoardComp
+ * @param {CompItem} newEndBoardComp
  * @param {profile} profile
  */
-function doThePromoClip(promoNum, tempFolder, originalComp, newComp, profile){
+function doThePromoClip(promoNum, tempFolder, originalComp, newComp, originalEndBoardComp, newEndBoardComp,  profile){
   var myFile = new File(promoData(myXML, promoNum).fullFile)
   var impOpts = new ImportOptions(myFile);
   if (impOpts.canImportAs(ImportAsType.FOOTAGE)){
@@ -340,6 +345,30 @@ function doThePromoClip(promoNum, tempFolder, originalComp, newComp, profile){
       if (newFootageLayers[j].type == "FOOT"){
         if (newFootage instanceof FootageItem){
           newFootageLayers[j].layer.replaceSource(newFootage, false)
+        }
+      }
+    }
+  }
+  var endBoardFootageObj = getFootageAndCompLayer(originalEndBoardComp, profile);
+  if (endBoardFootageObj.type == "COMP"){
+    var endBoardFootageComp = endBoardFootageObj.layer.source;
+    var newEndBoardFootageComp =endBoardFootageComp.duplicate();
+    newEndBoardFootageComp.parentFolder = tempFolder;
+    newEndBoardFootageComp.name = fileNameWithoutExtension(impOpts.file) + "_End_Board"
+
+    var newEndBoardCompFootageLayers = footageAndCompLayers(newEndBoardComp)
+    for (var j = 0; j < newEndBoardCompFootageLayers.length; j++){
+      if (newEndBoardCompFootageLayers[j].type == "COMP"){
+        if (newEndBoardCompFootageLayers[j].layer.source.name == endBoardFootageObj.layer.source.name){
+          newEndBoardCompFootageLayers[j].layer.replaceSource(newEndBoardFootageComp, false)
+        }
+      }
+    }
+    var newEndBoardFootageLayers = footageAndCompLayers(newEndBoardFootageComp)
+    for (var j = 0; j < newEndBoardFootageLayers.length; j++){
+      if (newEndBoardFootageLayers[j].type == "FOOT"){
+        if (newFootage instanceof FootageItem){
+          newEndBoardFootageLayers[j].layer.replaceSource(newFootage, false)
         }
       }
     }
