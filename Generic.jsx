@@ -61,5 +61,39 @@ function addDropDown(parentGrp, labelText, dropdownDefaultText, hasName, hasColo
   return {dropdown: dropdown, name: nameStaticText, group: grp, textColour: textColour, validColour: validColour}
 }
 
+/**
+ * 
+ * @param {string} timecodeString 
+ * @param {number} frameRate 
+ * @returns {number}
+ */
 
+function timecodeToSeconds(timecodeString, frameRate){
+// Expects timecode as "10:00:00:00" return seconds and fraction of seconds
+  var items = timecodeString.split(":");
+  if (items.length == 4){
+    var hours = parseInt(items[0]);
+    var minutes = parseInt(items[1]);
+    var seconds = parseInt(items[2]);
+    var frames = parseInt(items[3]);
+    var theTime 
+    if (hours != NaN){
+      theTime = hours * 3600;
+    }
+    if (minutes != NaN){
+      theTime = theTime + (minutes * 60);
+    }
+    if (seconds != NaN){
+      theTime = theTime + seconds;
+    }
+    if (frames != NaN){
+      theTime = theTime + (frames/frameRate);
+    }
+    return theTime;
+  } else {
+    return null;
+  }
+
+
+}
 
