@@ -306,7 +306,9 @@ function processData(){
       newEndBoardComp.parentFolder = myFolder
       newEndBoardComp.name = newComp.name + "_END_BOARD"
 
-      doTheEndBoard(newComp, myEndBoardComp, newEndBoardComp);
+      var endBoardLayer = doTheEndBoard(newComp, myEndBoardComp, newEndBoardComp);
+      var tcOffset = timecodeToSeconds(pData.endBoardTimecode, newComp.frameRate);
+      endBoardLayer.startTime = tcOffset;
 
       var newTextLayers = textLayers(newEndBoardComp)
       //hide the text layers
@@ -323,7 +325,7 @@ function processData(){
           }
         }
       }
-      doThePromoClip(i, myTempFootageFolder, myComp, newComp, myEndBoardComp, newEndBoardComp, profile);
+      doThePromoClip(i, myTempFootageFolder, myComp, newComp, myEndBoardComp, newEndBoardComp, profile, tcOffset);
       var bgCompName = promoData(myXML, i).backgroundName;
       var logoCompName = promoData(myXML, i).logoName;
       doBackgroundAndLogo(myEndBoardComp, newEndBoardComp, profile, bgCompName, logoCompName);
@@ -345,9 +347,10 @@ function processData(){
  * @param {CompItem} newComp
  * @param {CompItem} originalEndBoardComp
  * @param {CompItem} newEndBoardComp
+ * @param {number} endBoardTime
  * @param {profile} profile
  */
-function doThePromoClip(promoNum, tempFolder, originalComp, newComp, originalEndBoardComp, newEndBoardComp,  profile){
+function doThePromoClip(promoNum, tempFolder, originalComp, newComp, originalEndBoardComp, newEndBoardComp,  profile, endBoardTime){
   var myFile = new File(promoData(myXML, promoNum).fullFile)
   var impOpts = new ImportOptions(myFile);
   if (impOpts.canImportAs(ImportAsType.FOOTAGE)){
@@ -367,6 +370,7 @@ function doThePromoClip(promoNum, tempFolder, originalComp, newComp, originalEnd
       if (newCompFootageLayers[j].type == "COMP"){
         if (newCompFootageLayers[j].layer.source.name == footageObj.layer.source.name){
           newCompFootageLayers[j].layer.replaceSource(newFootageComp, false)
+          newCompFootageLayers[j].layer.outPoint = endBoardTime
         }
       }
     }
@@ -384,13 +388,14 @@ function doThePromoClip(promoNum, tempFolder, originalComp, newComp, originalEnd
     var endBoardFootageComp = endBoardFootageObj.layer.source;
     var newEndBoardFootageComp =endBoardFootageComp.duplicate();
     newEndBoardFootageComp.parentFolder = tempFolder;
-    newEndBoardFootageComp.name = fileNameWithoutExtension(impOpts.file) + "_End_Board"
+    newEndBoardFootageComp.name = fileNameWithoutExtension(impOpts.file) + "_END_BOARD"
 
     var newEndBoardCompFootageLayers = footageAndCompLayers(newEndBoardComp)
     for (var j = 0; j < newEndBoardCompFootageLayers.length; j++){
       if (newEndBoardCompFootageLayers[j].type == "COMP"){
         if (newEndBoardCompFootageLayers[j].layer.source.name == endBoardFootageObj.layer.source.name){
           newEndBoardCompFootageLayers[j].layer.replaceSource(newEndBoardFootageComp, false)
+          newEndBoardCompFootageLayers[j].layer.startTime = -endBoardTime;
         }
       }
     }
@@ -467,8 +472,10 @@ function doTheAudioClip(promoNum, tempFolder, originalComp, newComp, profile){
  * @param {CompItem} newComp 
  * @param {CompItem} originalEndBoardComp 
  * @param {CompItem} newEndBoardComp 
+ * @returns {AVLayer}
  */
 function doTheEndBoard(newComp, originalEndBoardComp, newEndBoardComp){
   var compLayer = getCompLayer(newComp,originalEndBoardComp.name);
   compLayer.replaceSource(newEndBoardComp,false);
+  return compLayer
 }
