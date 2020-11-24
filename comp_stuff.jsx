@@ -197,6 +197,24 @@ function findOrCreateFolder(folderName){
   }
   return myFolder
 }
+/**
+ * 
+ * @param {string} folderName 
+ * @returns {FolderItem}
+ */
+function createFolderDeletePrevious(folderName){
+  for (var i = 1; i <= app.project.numItems; i++){
+    var temp = app.project.item(i)
+    if (temp.name == folderName){
+      if (temp instanceof FolderItem){ 
+        temp.remove();
+        break;
+      }
+    }
+  }
+  var myFolder = app.project.items.addFolder(folderName)
+  return myFolder;
+}
 
 function hexToRGBArray(hex){
   var rgb = parseInt(hex, 16); 
@@ -268,10 +286,12 @@ function compFromDropDown(drop){
 }
 
 function processData(){
-  
-  var myFolder = findOrCreateFolder("MuVi2 Temp");
-  var myTempFootageFolder = findOrCreateFolder("Temp Footage");
-  myTempFootageFolder.parentFolder = myFolder
+  var myFolder =  createFolderDeletePrevious("MuVi2 Temp"); ///findOrCreateFolder("MuVi2 Temp");
+  var myTempFootageFolder = findOrCreateFolder("MuVi2 Temp Footage");
+  myTempFootageFolder.parentFolder = myFolder;
+  var mySubCompsFolder = findOrCreateFolder("MuVi2 Sub Comps");
+  mySubCompsFolder.parentFolder = myFolder;
+
   for (var i= 0; i < promoCount(myXML); i++){
     if (selectedPromos[i]){
       var promo = promoData(myXML,i);
@@ -280,15 +300,25 @@ function processData(){
       var newComp = myComp.duplicate();
       newComp.parentFolder = myFolder;  
       newComp.name = replacesSpacesWithUnderscores(promoCompName(promoData(myXML,i), true));
+      
       var myEndBoardComp = compFromName(profile.endBoardComp);
       var newEndBoardComp = myEndBoardComp.duplicate();
       newEndBoardComp.parentFolder = myFolder
-      newEndBoardComp.name = newComp.name + "_End_Board"
+      newEndBoardComp.name = newComp.name + "_END_BOARD"
+
+      doTheEndBoard(newComp, myEndBoardComp, newEndBoardComp);
+
       var newTextLayers = textLayers(newEndBoardComp)
+      //hide the text layers
+      for (var layer =0; layer < newTextLayers.length; layer++){
+        newTextLayers[layer].enabled =false;
+      }
+
       for (var textLayer = 0; textLayer < textLayerNames.length; textLayer++){
         var thisTextLayer = getTextLayer(textLayerNames[textLayer],profile)
         for (var layer = 0; layer < newTextLayers.length; layer++){
           if (newTextLayers[layer].name == thisTextLayer){
+            newTextLayers[layer].enabled = true;
             setTextValue(newTextLayers[layer],promoData(myXML,i)[textLayerNames[textLayer].toLowerCase()], getHexColour(textLayerNames[textLayer], profile))
           }
         }
@@ -431,5 +461,14 @@ function doTheAudioClip(promoNum, tempFolder, originalComp, newComp, profile){
       footageLayer.replaceSource(newFootage, false);
     }
   }
-  
+}
+/**
+ * 
+ * @param {CompItem} newComp 
+ * @param {CompItem} originalEndBoardComp 
+ * @param {CompItem} newEndBoardComp 
+ */
+function doTheEndBoard(newComp, originalEndBoardComp, newEndBoardComp){
+  var compLayer = getCompLayer(newComp,originalEndBoardComp.name);
+  compLayer.replaceSource(newEndBoardComp,false);
 }
