@@ -20,6 +20,8 @@ function columnNames(theXML){
  * @property {string} logoName
  * @property {string} profile
  * @property {string} audioFile
+ * @property {string} displayAudio
+ * @property {string} endBoardTimecode
  */
 /**
  * 
@@ -38,7 +40,9 @@ function promoData(theXML, itemNo){
                     backgroundName: theData.elements()[4],
                     logoName: theData.elements()[5],
                     profile: theData.elements()[6],
-                    audioFile: theData.elements()[7]}
+                    audioFile: theData.elements()[7],
+                    displayAudio: displayName(theData.elements()[7]),
+                    endBoardTimecode: theData.elements()[8]}
   return tempItem
 }
 
