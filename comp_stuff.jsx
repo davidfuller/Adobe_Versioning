@@ -317,11 +317,11 @@ function processData(){
       }
 
       for (var textLayer = 0; textLayer < textLayerNames.length; textLayer++){
-        var thisTextLayer = getTextLayer(textLayerNames[textLayer],profile)
+        var thisTextLayer = getTextLayer(textLayerNames[textLayer], profile);
         for (var layer = 0; layer < newTextLayers.length; layer++){
           if (newTextLayers[layer].name == thisTextLayer){
             newTextLayers[layer].enabled = true;
-            setTextValue(newTextLayers[layer],promoData(myXML,i)[textLayerNames[textLayer].toLowerCase()], getHexColour(textLayerNames[textLayer], profile))
+            setTextValue(newTextLayers[layer], promoData(myXML,i)[textLayerNames[textLayer].toLowerCase()], getHexColour(textLayerNames[textLayer], profile))
           }
         }
       }
