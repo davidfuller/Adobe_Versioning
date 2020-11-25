@@ -36,13 +36,26 @@ function renderMovie(theComp, renderTemplate){
     var renderItem = app.project.renderQueue.items.add(theComp);
     var outputModule = renderItem.outputModule(1);
     var outputFolder = getOutputFolderName()
-    archiveFile(outputFolder, archiveSubFolder, theComp.name)
+    
     outputModule.applyTemplate(renderTemplate);
+    var omSettings = outputModule.getSettings(GetSettingsFormat.STRING)
+    var omFileInfo = omSettings["Output File Info"]
+    var ext = getExtension(omFileInfo["Full Flat Path"]);
+
+    var fileName = theComp.name
+    if (ext != null){
+      fileName = fileName + ext
+    }
+    archiveFile(outputFolder, archiveSubFolder, fileName)
     outputModule.file = File(outputFolder + theComp.name);
     app.project.renderQueue.render();
   } 
 }
-
+/**
+ * 
+ * @param {string} filename 
+ * @returns {string}
+ */
 function getExtension(filename){
 
   var finalDotPosition = filename.lastIndexOf(".");
