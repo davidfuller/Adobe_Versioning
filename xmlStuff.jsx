@@ -14,6 +14,12 @@ function columnNames(theXML){
  * @property {string} title
  * @property {string} message
  * @property {string} navigation
+ * @property {string} oneLineTitle
+ * @property {string} oneLineMessage
+ * @property {string} oneLineNavigation
+ * @property {string} twoLineTitle
+ * @property {string} twoLineMessage
+ * @property {string} twoLineNavigation
  * @property {string} fullFile
  * @property {string} displayFile
  * @property {string} backgroundName
@@ -35,14 +41,20 @@ function promoData(theXML, itemNo){
   var tempItem = { title: theData.elements()[0],
                     message: theData.elements()[1],
                     navigation: theData.elements()[2],
-                    fullFile: theData.elements()[3], 
-                    displayFile: displayName(theData.elements()[3]),
-                    backgroundName: theData.elements()[4],
-                    logoName: theData.elements()[5],
-                    profile: theData.elements()[6],
-                    audioFile: theData.elements()[7],
-                    displayAudio: displayName(theData.elements()[7]),
-                    endBoardTimecode: theData.elements()[8]}
+                    oneLineTitle: theData.elements()[3],
+                    oneLineMessage: theData.elements()[4],
+                    oneLineNavigation: theData.elements()[5],
+                    twoLineTitle: theData.elements()[6],
+                    twoLineMessage: theData.elements()[7],
+                    twoLineNavigation: theData.elements()[8],
+                    fullFile: theData.elements()[9], 
+                    displayFile: displayName(theData.elements()[9]),
+                    backgroundName: theData.elements()[10],
+                    logoName: theData.elements()[11],
+                    profile: theData.elements()[12],
+                    audioFile: theData.elements()[13],
+                    displayAudio: displayName(theData.elements()[13]),
+                    endBoardTimecode: theData.elements()[14]}
   return tempItem
 }
 
