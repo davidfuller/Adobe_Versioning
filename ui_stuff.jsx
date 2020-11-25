@@ -16,7 +16,7 @@
  * @returns {ProfileWindow}
  */
 function createCompSettingsWindow(theComps){
-  var numTextDropDowns = 3;
+  var numTextDropDowns = 6;
   var numRenderTemplates = 2;
   var myWindow = new Window("dialog","Comp and Field Settings")
   myWindow.orientation = "column";
@@ -138,7 +138,6 @@ function createCompSettingsWindow(theComps){
     for (var j = 0; j < myFootageAndCompLayers.length; j++){
       myClipDropDown.add("item", footageDisplay(myFootageAndCompLayers[j]));
     }
-    
     myAudioDropDown.removeAll();
     for (var j = 0; j < myFootageLayers.length; j++){
       myAudioDropDown.add("item", myFootageLayers[j].name);
@@ -174,12 +173,20 @@ function createCompSettingsWindow(theComps){
   myTextDropDown[0].onChange = function(){
     textDropDownChange(0)
   }
-  
   myTextDropDown[1].onChange = function(){
     textDropDownChange(1)
   }
   myTextDropDown[2].onChange = function(){
     textDropDownChange(2)
+  }
+  myTextDropDown[3].onChange = function(){
+    textDropDownChange(3)
+  }
+  myTextDropDown[4].onChange = function(){
+    textDropDownChange(4)
+  }
+  myTextDropDown[5].onChange = function(){
+    textDropDownChange(5)
   }
 
   myTextColour[0].onChange = function(){
@@ -190,6 +197,15 @@ function createCompSettingsWindow(theComps){
   }
   myTextColour[2].onChange = function(){
     changeColourStatus(2)
+  }
+  myTextColour[3].onChange = function(){
+    changeColourStatus(3)
+  }
+  myTextColour[4].onChange = function(){
+    changeColourStatus(4)
+  }
+  myTextColour[5].onChange = function(){
+    changeColourStatus(5)
   }
 
   myClipDropDown.onChange = function(){
@@ -226,7 +242,10 @@ function createCompSettingsWindow(theComps){
       validColour[index].text = "N";
     }
   }
-  
+  /**
+   * 
+   * @param {number} index 
+   */
   function textDropDownChange(index){
     if (globalEndBoardComp != null){
       var myTextLayers = textLayers(globalEndBoardComp);
