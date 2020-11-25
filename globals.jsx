@@ -7,7 +7,7 @@ var macOutputFolder = "/Users/David/Dropbox/Development/Adobe/Movies/";
 var pcOutputFolder = "/C/Users/David/Documents/vscode/Adobe_Versioning/movies/";
 
 var compProfileFileName = "comp_profile.json"
-var textLayerNames = ["Title", "Message", "Navigation"]
+var textLayerNames = ["1L Title", "1L Message", "1L Navigation", "2L Title", "2L Message", "2L Navigation"]
 var renderNames = ["Still", "Clip"]
 
 var defaultSettings = {
