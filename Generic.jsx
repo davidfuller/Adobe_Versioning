@@ -39,7 +39,7 @@ function addDropDown(parentGrp, labelText, dropdownDefaultText, hasName, hasColo
   grp.alignment = "left"
   
   var label = grp.add("statictext", undefined, labelText)
-  label.size = [60,12];
+  label.size = [75,12];
 
   var dropdown = grp.add("dropdownlist", undefined, []);
   dropdown.add("item", dropdownDefaultText);
@@ -103,12 +103,21 @@ function timecodeToSeconds(timecodeString, frameRate){
 function archiveFile(outputFolder, archiveSubFolder, fileName){
   var tempFile = new File(outputFolder + fileName);
   if (tempFile.exists){
+    var archiveFolder = new Folder(outputFolder + archiveSubFolder);
+    if (!archiveFolder.exists){
+      archiveFolder.create();
+    }
     var archiveFile = new File(outputFolder + archiveSubFolder + fileName);
     var loop = 0;
     while (archiveFile.exists){
       loop = loop + 1;
-      archiveFile = new File(fileNameWithoutExtension(archiveFile) + "_" + loop + getExtension(archiveFile.name))
+      if (loop > 99){
+        break;
+      }
+      archiveFile = new File(outputFolder + archiveSubFolder + fileNameWithoutExtension(tempFile) + "_" + ("0000" + loop).slice(-4) + getExtension(fileName))
     }
-    tempFile.rename(archiveFile.fullName)
+    if (tempFile.copy(archiveFile.fullName)){
+      tempFile.remove()
+    }
   }
 }
