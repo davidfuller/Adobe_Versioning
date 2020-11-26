@@ -316,12 +316,12 @@ function processData(){
         newTextLayers[layer].enabled =false;
       }
 
-      for (var textLayer = 0; textLayer < textLayerNames.length; textLayer++){
-        var thisTextLayer = getTextLayer(textLayerNames[textLayer], profile);
+      for (var textLayer = 0; textLayer < textMapping.length; textLayer++){
+        var thisTextLayer = getTextLayer(textMapping[textLayer].profileField, profile);
         for (var layer = 0; layer < newTextLayers.length; layer++){
           if (newTextLayers[layer].name == thisTextLayer){
             newTextLayers[layer].enabled = true;
-            setTextValue(newTextLayers[layer], promoData(myXML,i)[textLayerNames[textLayer].toLowerCase()], getHexColour(textLayerNames[textLayer], profile))
+            setTextValue(newTextLayers[layer], promoData(myXML,i)[textMapping[textLayer].dataField], getHexColour(textMapping[textLayer].profileField, profile))
           }
         }
       }
