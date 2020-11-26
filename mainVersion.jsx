@@ -1,12 +1,13 @@
-//@include "comp_stuff.jsx"
-//@include "ui_stuff.jsx"
+//@include "compStuff.jsx"
+//@include "generic.jsx"
+//@include "globals.jsx"
+//@include "uiStuff.jsx"
 //@include "xmlStuff.jsx"
 //@include "Render_Stuff.jsx"
-//@include "globals.jsx"
 //@include "json_Stuff.jsx"
 //@include "File_Stuff.jsx"
 //@include "Profile_stuff.jsx"
-//@include "Generic.jsx"
+
 
 var theSettings = loadSettingsJson(settingsFilenameJson);
 var file = new File;
@@ -58,12 +59,6 @@ if (doIt){
   $.writeln(pData.title)
 
   processData()
-}
-
-function showCompWindow(){
-  var projectItems = compItems();
-  var compWindow = createCompSettingsWindow(projectItems);
-  compWindow.window.show() 
 }
 
 function getItems(){
