@@ -79,7 +79,7 @@ function createCompSettingsWindow(theComps){
   
   for (var i = 0; i < numTextDropDowns; i++){
     if (i < numTextDropDowns){
-      tempDrop = addDropDown(endBoardPanel, textLayerNames[i], "Text layers will appear here", true, true, "Hex Colour", "N");
+      tempDrop = addDropDown(endBoardPanel, textMapping[i].name, "Text layers will appear here", true, true, "Hex Colour", "N");
       myTextDropDown[i] = tempDrop.dropdown;
       
       myTextColour[i] = tempDrop.textColour;
@@ -281,11 +281,11 @@ function createCompSettingsWindow(theComps){
       for(var i = 0; i < numTextDropDowns; i++){
         var textLayer = allTextLayers[myTextDropDown[i].selection.index].name;
         var textObj = {};
-        textObj[textLayerNames[i]] = textLayer;
+        textObj[textMapping[i].profileField] = textLayer;
         profile.textLayers.push(textObj);
         var hexColour = myTextColour[i].text
         var hexObj = {};
-        hexObj[textLayerNames[i]] = hexColour;
+        hexObj[textMapping[i].profileField] = hexColour;
         profile.hexColours.push(hexObj);
       }
       
@@ -322,8 +322,8 @@ function createCompSettingsWindow(theComps){
     compDropdown.selection = compDropdown.find(profile.composition);
     endBoardCompDropdown.selection = endBoardCompDropdown.find(profile.endBoardComp);
     for (var i = 0; i < numTextDropDowns; i++){
-      myTextDropDown[i].selection = myTextDropDown[i].find(profile.textLayers[i][textLayerNames[i]])
-      myTextColour[i].text = profile.hexColours[i][textLayerNames[i]]
+      myTextDropDown[i].selection = myTextDropDown[i].find(profile.textLayers[i][textMapping[i].profileField])
+      myTextColour[i].text = profile.hexColours[i][textMapping[i].profileField]
       changeColourStatus(i)
     }
     for (var i = 0; i < numRenderTemplates; i++){
