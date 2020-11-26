@@ -479,3 +479,9 @@ function doTheEndBoard(newComp, originalEndBoardComp, newEndBoardComp){
   compLayer.replaceSource(newEndBoardComp,false);
   return compLayer
 }
+
+function showCompWindow(){
+  var projectItems = compItems();
+  var compWindow = createCompSettingsWindow(projectItems);
+  compWindow.window.show() 
+}
